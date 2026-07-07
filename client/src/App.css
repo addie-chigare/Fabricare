@@ -1,0 +1,19 @@
+.product-card{
+transition:0.3s;
+border:none;
+}
+
+.product-card:hover{
+transform:translateY(-5px);
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.product-img{
+height:220px;
+object-fit:cover;
+}
+
+.card-title{
+font-size:15px;
+min-height:40px;
+}

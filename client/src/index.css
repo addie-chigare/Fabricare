@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Brand Colors */
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --secondary: #ec4899;
+  --accent: #f59e0b;
+  
+  /* Grays & Neutrals */
+  --bg-main: #f8fafc;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-light: #e2e8f0;
+  --card-bg: #ffffff;
+  
+  /* Glassmorphism & UI Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-blur: blur(12px);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  --hover-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  --radius-lg: 1rem;
+  --radius-md: 0.75rem;
+  
+  /* Transition */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --bg-main: #0b0f19;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-light: #1e293b;
+  --card-bg: #111827;
+  
+  --glass-bg: rgba(15, 23, 42, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+  --hover-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Day/Night Universal Theme Styling Overrides */
+.card, .list-group-item, .modal-content, .dropdown-menu {
+  background-color: var(--card-bg) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-light) !important;
+}
+
+.dropdown-item {
+  color: var(--text-main) !important;
+}
+.dropdown-item:hover {
+  background-color: rgba(99, 102, 241, 0.08) !important;
+  color: var(--primary) !important;
+}
+
+.form-control, .form-select, .input-group-text {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-light) !important;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+}
+
+.text-dark {
+  color: var(--text-main) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.border, .border-top, .border-bottom, .border-end, .border-start, .border-light-subtle {
+  border-color: var(--border-light) !important;
+}
+
+.bg-white {
+  background-color: var(--card-bg) !important;
+}
+
+.bg-light {
+  background-color: var(--bg-main) !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+}
+
+/* Glassmorphism Styles */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* Button Upgrades */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+  border: none;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+}
+
+/* Common Layout Utilities */
+.section-padding {
+  padding: 5rem 0;
+}
+
+.hero-gradient {
+  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.1), transparent),
+              radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.1), transparent);
+}
+
+/* Upgraded Navbar Custom Styles */
+.navbar-mobile-menu {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 1.5rem 1.5rem;
+  padding: 1.5rem;
+}
+
+.nav-link-custom {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: var(--text-muted) !important;
+  font-weight: 600;
+  border-radius: 2rem;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.nav-link-custom:hover, .nav-link-custom.active {
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--primary) !important;
+}
+
+/* Pulsing Cart Badge Animation */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+.animate-pulse {
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+/* Search bar focus animation */
+.form-control-theme {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.form-control-theme:focus {
+  width: 350px !important;
+}
+
+.search-mobile-overlay {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.05);
+}
+
+/* Profile Dashboard Helpers */
+.bg-light-blue {
+  background-color: rgba(99, 102, 241, 0.05) !important;
+}
+
+.smaller {
+  font-size: 0.75rem !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+/* Product Grid Premium Styling */
+.product-card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.08) !important;
+}
+
+.product-card-hover:hover .image-zoom {
+  transform: scale(1.05);
+}
+
+.image-zoom {
+  transition: transform 0.3s ease-in-out;
+}

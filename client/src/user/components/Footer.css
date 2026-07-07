@@ -1,0 +1,28 @@
+.footer-link {
+  color: #94a3b8 !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.footer-link:hover, .footer-link:focus {
+  color: #94a3b8 !important;
+  opacity: 0.7;
+  text-decoration: none;
+}
+.footer-input {
+  color: #94a3b8 !important;
+  background-color: transparent !important;
+  border-color: #475569 !important;
+}
+.footer-input:focus {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #64748b !important;
+  box-shadow: none !important;
+}
+.footer-text-hover {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.footer-text-hover:hover {
+  opacity: 0.7;
+}
