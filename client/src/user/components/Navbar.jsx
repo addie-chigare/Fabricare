@@ -653,7 +653,7 @@ const AppNavbar = () => {
             )}
 
             {/* Wishlist */}
-            {token && (
+            {isDesktop && token && (
               <button
                 type="button"
                 aria-label={`Wishlist, ${wishlistCount} items`}
@@ -680,16 +680,18 @@ const AppNavbar = () => {
             </Link>
 
             {/* Theme toggle */}
-            <button
-              type="button"
-              aria-label="Toggle theme"
-              style={iconBtnStyle(isHover("theme"))}
-              onMouseEnter={() => setHoverId("theme")}
-              onMouseLeave={() => setHoverId(null)}
-              onClick={toggleTheme}
-            >
-              {theme === "dark" ? <FaSun color="#e0a530" size={17} /> : <FaMoon color={COLOR.accentDark} size={16} />}
-            </button>
+            {isDesktop && (
+              <button
+                type="button"
+                aria-label="Toggle theme"
+                style={iconBtnStyle(isHover("theme"))}
+                onMouseEnter={() => setHoverId("theme")}
+                onMouseLeave={() => setHoverId(null)}
+                onClick={toggleTheme}
+              >
+                {theme === "dark" ? <FaSun color="#e0a530" size={17} /> : <FaMoon color={COLOR.accentDark} size={16} />}
+              </button>
+            )}
 
             {/* Profile / Account */}
             {isDesktop && (
@@ -941,6 +943,22 @@ const AppNavbar = () => {
               }} onClick={() => setMenuOpen(false)}>
                 Register
               </Link>
+              <div style={{ borderTop: `1px solid ${COLOR.border}`, margin: "12px 0" }} />
+              <button
+                type="button"
+                style={{ ...drawerLinkStyle, borderBottom: "none" }}
+                onClick={toggleTheme}
+              >
+                {theme === "dark" ? (
+                  <>
+                    <FaSun color="#e0a530" size={13} /> Light Mode
+                  </>
+                ) : (
+                  <>
+                    <FaMoon color={COLOR.accentDark} size={13} /> Dark Mode
+                  </>
+                )}
+              </button>
             </div>
           ) : (
             <>
@@ -1058,6 +1076,21 @@ const AppNavbar = () => {
                   <span style={{ marginLeft: "auto", background: COLOR.danger, color: "#fff", borderRadius: 999, fontSize: "0.68rem", padding: "1px 6px" }}>
                     {wishlistCount}
                   </span>
+                )}
+              </button>
+              <button
+                type="button"
+                style={drawerLinkStyle}
+                onClick={toggleTheme}
+              >
+                {theme === "dark" ? (
+                  <>
+                    <FaSun color="#e0a530" size={13} /> Light Mode
+                  </>
+                ) : (
+                  <>
+                    <FaMoon color={COLOR.accentDark} size={13} /> Dark Mode
+                  </>
                 )}
               </button>
             </>
