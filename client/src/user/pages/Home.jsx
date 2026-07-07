@@ -129,7 +129,7 @@ const Home = () => {
                             {banner.subtitle}
                           </p>
                         )}
-                        <Button as={Link} to={banner.link || "/products"} variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow">
+                        <Button as={Link} to={banner.link || "/products"} variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow d-none d-md-inline-block">
                           Shop Now
                         </Button>
                       </Col>
@@ -163,7 +163,7 @@ const Home = () => {
                         <p className="lead mb-4 text-white-50">
                           Discover our premium organic cotton clothing collections designed for ultimate daily comfort and luxurious style.
                         </p>
-                        <Button as={Link} to="/products" variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow">
+                        <Button as={Link} to="/products" variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow d-none d-md-inline-block">
                           Explore Catalog
                         </Button>
                       </Col>
@@ -195,7 +195,7 @@ const Home = () => {
                         <p className="lead mb-4 text-white-50">
                           Make a bold statement with our curated streetwear, jackets, denim, and premium cotton accessories.
                         </p>
-                        <Button as={Link} to="/products" variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow">
+                        <Button as={Link} to="/products" variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow d-none d-md-inline-block">
                           Shop Men's
                         </Button>
                       </Col>
@@ -246,7 +246,7 @@ const Home = () => {
           <Col md={6}>
             <Card className="border-0 shadow-sm p-4 rounded-4 bg-white h-100">
               <h5 className="fw-bold mb-3 pb-2 border-bottom text-dark">🙋‍♂️ Men's Wear</h5>
-              <div className="d-flex flex-wrap gap-2">
+              <div className="d-flex flex-wrap gap-2 category-grid-mobile">
                 {MENS_PILLS.map((pill) => (
                   <Button
                     key={pill.slug}
@@ -264,7 +264,7 @@ const Home = () => {
           <Col md={6}>
             <Card className="border-0 shadow-sm p-4 rounded-4 bg-white h-100">
               <h5 className="fw-bold mb-3 pb-2 border-bottom text-dark">👧 Kids' Wear</h5>
-              <div className="d-flex flex-wrap gap-2">
+              <div className="d-flex flex-wrap gap-2 category-grid-mobile">
                 {KIDS_PILLS.map((pill) => (
                   <Button
                     key={pill.slug}
@@ -286,10 +286,10 @@ const Home = () => {
       <Container className="mb-5">
         <div className="d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 className="fw-bold mb-1 text-dark">Featured Products</h3>
+            <h3 className="fw-bold mb-1 text-dark fs-4 fs-md-3">Featured Products</h3>
             <p className="text-muted small">Handpicked premium designs, tailored just for you</p>
           </div>
-          <Button as={Link} to="/products" variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1">
+          <Button as={Link} to="/products" variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1 flex-shrink-0">
             <span>View All</span> <FaChevronRight size={10} />
           </Button>
         </div>
@@ -308,10 +308,10 @@ const Home = () => {
       <Container className="mb-5">
         <div className="d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 className="fw-bold mb-1 text-dark">Men's Collection</h3>
+            <h3 className="fw-bold mb-1 text-dark fs-4 fs-md-3">Men's Collection</h3>
             <p className="text-muted small">Elevate your daily wardrobe with high comfort wear</p>
           </div>
-          <Button as={Link} to="/products?category=men-shirts" variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1">
+          <Button as={Link} to="/products?category=men-shirts" variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1 flex-shrink-0">
             <span>Shop Men's</span> <FaChevronRight size={10} />
           </Button>
         </div>
@@ -332,10 +332,10 @@ const Home = () => {
       <Container className="mb-5">
         <div className="d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 className="fw-bold mb-1 text-dark">Kids' Collection</h3>
+            <h3 className="fw-bold mb-1 text-dark fs-4 fs-md-3">Kids' Collection</h3>
             <p className="text-muted small">Fun, comfortable, and durable styles for children</p>
           </div>
-          <Button as={Link} to="/products?category=kids-shirts" variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1">
+          <Button as={Link} to="/products?category=kids-shirts" variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1 flex-shrink-0">
             <span>Shop Kids'</span> <FaChevronRight size={10} />
           </Button>
         </div>

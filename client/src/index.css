@@ -220,3 +220,32 @@ h1, h2, h3, h4, h5, h6 {
 .image-zoom {
   transition: transform 0.3s ease-in-out;
 }
+
+/* Mobile responsive styles */
+@media (max-width: 767px) {
+  .category-grid-mobile {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+  
+  .category-grid-mobile .btn-category-pill {
+    width: 100% !important;
+    margin: 0 !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.72rem !important;
+    padding: 4px !important;
+    border-radius: 8px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  .mobile-product-img-box {
+    height: 140px !important;
+  }
+}
+

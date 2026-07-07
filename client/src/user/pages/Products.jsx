@@ -92,7 +92,7 @@ const Products = () => {
       {/* FILTERS */}
       <div className="bg-white p-4 rounded-4 shadow-sm mb-5 border">
         <Row className="gy-3 align-items-center">
-          <Col lg={4}>
+          <Col lg={4} className="d-none d-lg-block">
             <Form.Group>
               <Form.Label className="small fw-bold text-muted text-uppercase mb-2" style={{ letterSpacing: "0.05em" }}>Search</Form.Label>
               <Form.Control

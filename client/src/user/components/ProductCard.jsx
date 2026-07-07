@@ -103,7 +103,7 @@ const ProductCard = ({ product }) => {
 
         {/* Product Image Box */}
         <div
-          className="position-relative overflow-hidden d-flex align-items-center justify-content-center bg-light"
+          className="position-relative overflow-hidden d-flex align-items-center justify-content-center bg-light mobile-product-img-box"
           style={{ height: "200px" }}
         >
           <Card.Img
