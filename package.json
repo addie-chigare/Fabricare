@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Root package runner for client and server",
   "scripts": {
+    "postinstall": "npm install --prefix server",
+    "build": "npm install --prefix server",
     "start": "npm run start --prefix server",
     "dev": "npm run dev --prefix server",
     "client": "npm run dev --prefix client",
