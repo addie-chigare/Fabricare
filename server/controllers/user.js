@@ -4,10 +4,60 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
+const sendEmailViaBrevo = async (email, subject, htmlContent) => {
+  const senderEmail = process.env.SMTP_USER || "support@fabricare.com";
+  try {
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+        "api-key": process.env.BREVO_API_KEY,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        sender: { name: "Fabricare Support", email: senderEmail },
+        to: [{ email: email }],
+        subject: subject,
+        htmlContent: htmlContent
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || `Brevo returned status ${response.status}`);
+    }
+    console.log(`[Brevo] Email sent successfully to ${email}. Message ID: ${data.messageId || data.id}`);
+    return true;
+  } catch (err) {
+    console.error(`[Brevo Error] Failed to send email to ${email}:`, err.message);
+    throw new Error(`Could not send email via Brevo: ${err.message}`);
+  }
+};
+
 const sendRegisterOtpEmail = async (email, otp) => {
+  const subject = "Email Verification OTP - Fabricare";
+  const htmlContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+        <h2 style="color: #4caf50; text-align: center;">Verify Your Email Address</h2>
+        <p>Welcome to Fabricare!</p>
+        <p>Thank you for signing up. Please use the following 6-digit OTP code to verify your email and complete your registration. This code is valid for 10 minutes.</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #111; background-color: #f1f5f9; padding: 10px 20px; border-radius: 8px; border: 1px dashed #4caf50;">
+            ${otp}
+          </span>
+        </div>
+        <p>If you did not request this registration, you can safely ignore this email.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin-top: 30px;" />
+        <p style="font-size: 12px; color: #888; text-align: center;">This is an automated system email. Please do not reply.</p>
+      </div>
+    `;
+
+  if (process.env.BREVO_API_KEY) {
+    return await sendEmailViaBrevo(email, subject, htmlContent);
+  }
+
   let transporter;
 
- 
   if (process.env.SMTP_USER && process.env.SMTP_PASS) {
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.gmail.com",
@@ -41,22 +91,8 @@ const sendRegisterOtpEmail = async (email, otp) => {
   const mailOptions = {
     from: `"Fabricare Support" <${process.env.SMTP_USER || "support@fabricare.com"}>`,
     to: email,
-    subject: "Email Verification OTP - Fabricare",
-    html: `
-      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
-        <h2 style="color: #4caf50; text-align: center;">Verify Your Email Address</h2>
-        <p>Welcome to Fabricare!</p>
-        <p>Thank you for signing up. Please use the following 6-digit OTP code to verify your email and complete your registration. This code is valid for 10 minutes.</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #111; background-color: #f1f5f9; padding: 10px 20px; border-radius: 8px; border: 1px dashed #4caf50;">
-            ${otp}
-          </span>
-        </div>
-        <p>If you did not request this registration, you can safely ignore this email.</p>
-        <hr style="border: none; border-top: 1px solid #eee; margin-top: 30px;" />
-        <p style="font-size: 12px; color: #888; text-align: center;">This is an automated system email. Please do not reply.</p>
-      </div>
-    `,
+    subject,
+    html: htmlContent,
   };
 
   try {
@@ -323,6 +359,27 @@ export const login = async (req, res) => {
 
 // Email sending helper function using Nodemailer
 const sendOtpEmail = async (email, otp) => {
+  const subject = "Password Reset OTP - Fabricare";
+  const htmlContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+        <h2 style="color: #6366f1; text-align: center;">Fabricare Password Reset</h2>
+        <p>Hello,</p>
+        <p>You requested a password reset for your Fabricare account. Use the following 6-digit OTP code to verify your identity. This code is valid for 10 minutes.</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #111; background-color: #f1f5f9; padding: 10px 20px; border-radius: 8px; border: 1px dashed #6366f1;">
+            ${otp}
+          </span>
+        </div>
+        <p>If you did not request this, you can safely ignore this email.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin-top: 30px;" />
+        <p style="font-size: 12px; color: #888; text-align: center;">This is an automated system email. Please do not reply.</p>
+      </div>
+    `;
+
+  if (process.env.BREVO_API_KEY) {
+    return await sendEmailViaBrevo(email, subject, htmlContent);
+  }
+
   let transporter;
 
   // Check if SMTP environment variables are defined
@@ -359,22 +416,8 @@ const sendOtpEmail = async (email, otp) => {
   const mailOptions = {
     from: `"Fabricare Support" <${process.env.SMTP_USER || "support@fabricare.com"}>`,
     to: email,
-    subject: "Password Reset OTP - Fabricare",
-    html: `
-      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
-        <h2 style="color: #6366f1; text-align: center;">Fabricare Password Reset</h2>
-        <p>Hello,</p>
-        <p>You requested a password reset for your Fabricare account. Use the following 6-digit OTP code to verify your identity. This code is valid for 10 minutes.</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #111; background-color: #f1f5f9; padding: 10px 20px; border-radius: 8px; border: 1px dashed #6366f1;">
-            ${otp}
-          </span>
-        </div>
-        <p>If you did not request this, you can safely ignore this email.</p>
-        <hr style="border: none; border-top: 1px solid #eee; margin-top: 30px;" />
-        <p style="font-size: 12px; color: #888; text-align: center;">This is an automated system email. Please do not reply.</p>
-      </div>
-    `,
+    subject,
+    html: htmlContent,
   };
 
   try {
