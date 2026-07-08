@@ -19,7 +19,24 @@ const EditProduct = () => {
   const [material, setMaterial] = useState("");
   const [colors, setColors] = useState("");
   const [sizes, setSizes] = useState("");
-  const [images, setImages] = useState("");
+  const [imagesList, setImagesList] = useState([""]);
+
+  const handleImageUrlChange = (index, value) => {
+    const updated = [...imagesList];
+    updated[index] = value;
+    setImagesList(updated);
+  };
+
+  const handleAddImageUrl = () => {
+    if (imagesList.length < 4) {
+      setImagesList([...imagesList, ""]);
+    }
+  };
+
+  const handleRemoveImageUrl = (index) => {
+    const updated = imagesList.filter((_, i) => i !== index);
+    setImagesList(updated.length > 0 ? updated : [""]);
+  };
   const [reviews, setReviews] = useState([]);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
@@ -55,7 +72,7 @@ const EditProduct = () => {
       setMaterial(product.material || "");
       setColors(product.colors ? product.colors.join(", ") : "");
       setSizes(product.sizes ? product.sizes.join(", ") : "");
-      setImages(product.images ? product.images.join(", ") : "");
+      setImagesList(product.images && product.images.length > 0 ? product.images : [""]);
       setReviews(product.reviews || []);
       setPreview(product.image);
     } catch (error) {
@@ -85,7 +102,7 @@ const EditProduct = () => {
       formData.append("material", material);
       formData.append("colors", colors);
       formData.append("sizes", sizes);
-      formData.append("images", images);
+      formData.append("images", imagesList.filter(url => url.trim() !== "").join(","));
       if (image) {
         formData.append("image", image);
       }
@@ -283,14 +300,43 @@ const EditProduct = () => {
                   />
                 </div>
                 <div className="col-12 mt-3">
-                  <label className="form-label small fw-semibold text-muted text-uppercase">Additional Image URLs (Comma-separated)</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="e.g. https://url1.com, https://url2.com"
-                    value={images}
-                    onChange={(e) => setImages(e.target.value)}
-                  />
+                  <label className="form-label small fw-semibold text-muted text-uppercase d-flex justify-content-between align-items-center">
+                    <span>Additional Image URLs (Max 4)</span>
+                    {imagesList.length < 4 && (
+                      <button
+                        type="button"
+                        onClick={handleAddImageUrl}
+                        className="btn btn-sm btn-link p-0 fw-bold text-decoration-none"
+                        style={{ fontSize: "0.75rem" }}
+                      >
+                        + Add Image
+                      </button>
+                    )}
+                  </label>
+                  <div className="d-flex flex-column gap-2">
+                    {imagesList.map((url, index) => (
+                      <div key={index} className="d-flex gap-2 align-items-center">
+                        <span className="text-muted small font-monospace">#{index + 1}</span>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder={`https://example.com/image-${index + 1}.jpg`}
+                          value={url}
+                          onChange={(e) => handleImageUrlChange(index, e.target.value)}
+                        />
+                        {(imagesList.length > 1 || url !== "") && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImageUrl(index)}
+                            className="btn btn-sm btn-outline-danger px-2.5 py-2"
+                            style={{ borderRadius: "0.375rem" }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <div className="col-12 mt-3">
                   <div className="form-check form-switch bg-light p-3 rounded-3 border">
