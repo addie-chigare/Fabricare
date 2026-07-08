@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Row, Col, Button, Alert, Badge, Card, Spinner, Container } from "react-bootstrap";
+import { Row, Col, Button, Alert, Badge, Card, Spinner, Container, Carousel } from "react-bootstrap";
 import { 
   FaHeart, 
   FaRegHeart, 
@@ -13,7 +13,6 @@ import {
   FaChevronRight 
 } from "react-icons/fa";
 import API from "../../services/api";
-import axios from "axios";
 import { useCart } from "../../context/CartContext";
 
 const ProductDetails = () => {
@@ -28,8 +27,6 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(false);
   const [added, setAdded] = useState(false);
   
-  // Image gallery states
-  const [activeImage, setActiveImage] = useState("");
 
   // Variant selection states
   const [selectedSize, setSelectedSize] = useState("");
@@ -43,7 +40,7 @@ const ProductDetails = () => {
       const res = await API.get(`/products/${id}`);
       const data = res.data;
       setProduct(data);
-      setActiveImage(data.image);
+
       
       // Default selections
       if (data.sizes && data.sizes.length > 0) setSelectedSize(data.sizes[0]);
@@ -82,7 +79,7 @@ const ProductDetails = () => {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:8000/api/v1/auth/wishlist/toggle", 
+      const res = await API.post("/auth/wishlist/toggle", 
         { productId: id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -184,45 +181,35 @@ const ProductDetails = () => {
       )}
 
       <Row className="gy-4 mb-5">
-        {/* LEFT: Image Gallery (No Zoom) */}
+        {/* LEFT: Image Carousel Slider */}
         <Col lg={6}>
-          <Row>
-            {/* Thumbnails (desktop left side, mobile bottom) */}
-            {galleryImages.length > 1 && (
-              <Col md={2} className="order-2 order-md-1 mt-3 mt-md-0 d-flex flex-row flex-md-column gap-2 justify-content-start">
-                {galleryImages.map((imgUrl, i) => (
-                  <div 
-                    key={i}
-                    className={`border rounded-3 p-1 bg-white cursor-pointer transition ${activeImage === imgUrl ? "border-primary border-2" : "border-light"}`}
-                    onClick={() => setActiveImage(imgUrl)}
-                    style={{ width: "65px", height: "65px", overflow: "hidden" }}
-                  >
-                    <img src={imgUrl} alt={`thumbnail-${i}`} className="w-100 h-100 object-fit-cover rounded-2" />
+          <div className="border rounded-4 bg-white p-3 shadow-sm overflow-hidden position-relative">
+            <Carousel 
+              variant="dark" 
+              interval={null} 
+              indicators={galleryImages.length > 1}
+              controls={galleryImages.length > 1}
+              className="product-details-carousel"
+            >
+              {galleryImages.map((imgUrl, i) => (
+                <Carousel.Item key={i}>
+                  <div style={{ height: "450px" }} className="d-flex align-items-center justify-content-center bg-white">
+                    <img
+                      src={imgUrl}
+                      alt={`${product.name} view ${i + 1}`}
+                      className="w-100 h-100 object-fit-contain"
+                      onError={(e) => { e.target.src = "https://placehold.co/400x400?text=No+Image" }}
+                    />
                   </div>
-                ))}
-              </Col>
+                </Carousel.Item>
+              ))}
+            </Carousel>
+            {discountVal > 0 && (
+              <Badge bg="danger" className="position-absolute top-0 start-0 m-3 px-3 py-2 rounded-3 shadow" style={{ zIndex: 5 }}>
+                {discountVal}% OFF
+              </Badge>
             )}
-
-            {/* Main Image Display Container (No Hover Zoom) */}
-            <Col md={galleryImages.length > 1 ? 10 : 12} className="order-1 order-md-2">
-              <div 
-                className="main-image-container border rounded-4 bg-white p-3 shadow-sm overflow-hidden position-relative"
-                style={{ height: "450px" }}
-              >
-                <img
-                  src={activeImage}
-                  alt={product.name}
-                  className="w-100 h-100 object-fit-contain"
-                  onError={(e) => { e.target.src = "https://placehold.co/400x400?text=No+Image" }}
-                />
-                {discountVal > 0 && (
-                  <Badge bg="danger" className="position-absolute top-0 start-0 m-3 px-3 py-2 rounded-3 shadow">
-                    {discountVal}% OFF
-                  </Badge>
-                )}
-              </div>
-            </Col>
-          </Row>
+          </div>
         </Col>
 
         {/* RIGHT: Product Metadata & Choices */}
