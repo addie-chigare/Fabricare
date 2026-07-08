@@ -42,7 +42,6 @@ const FONT_SANS = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },
-  { label: "Products", to: "/products" },
   { label: "Laundry", href: "/#laundry-section" },
 ];
 
@@ -61,8 +60,6 @@ const AppNavbar = () => {
     typeof window !== "undefined" ? window.innerWidth : 1280
   );
   const [settings, setSettings] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -113,21 +110,7 @@ const AppNavbar = () => {
     return () => window.removeEventListener("settings-updated", fetchSettings);
   }, [fetchSettings]);
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      const res = await API.get("/categories");
-      setCategories(res.data);
-    } catch (err) {
-      console.error("Failed to load categories in Navbar:", err);
-    }
-  }, []);
 
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
-  const menCategories = categories.filter((cat) => cat.type === "men");
-  const kidsCategories = categories.filter((cat) => cat.type === "kids");
 
   const applyTheme = (t) => {
     if (t === "dark") {
@@ -965,101 +948,9 @@ const AppNavbar = () => {
               <Link to="/" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
                 Home
               </Link>
-              <Link to="/products" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
-                Products
-              </Link>
               <a href="/#laundry-section" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
                 <FaTshirt size={13} /> Laundry Service
               </a>
-
-              {/* Categories collapsible menu in mobile view */}
-              <div>
-                <button
-                  type="button"
-                  style={{
-                    ...drawerLinkStyle,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  onClick={() => setCategoriesOpen(!categoriesOpen)}
-                >
-                  <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <FaTshirt size={13} /> Explore Categories
-                  </span>
-                  <span style={{
-                    transform: categoriesOpen ? "rotate(90deg)" : "rotate(0deg)",
-                    transition: "transform 0.2s ease",
-                    fontSize: "0.75rem",
-                    color: COLOR.textSoft,
-                  }}>
-                    ▶
-                  </span>
-                </button>
-                <AnimatePresence>
-                  {categoriesOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      style={{ overflow: "hidden", background: COLOR.surface, paddingLeft: 12 }}
-                    >
-                      {menCategories.length > 0 && (
-                        <div style={{ padding: "10px 16px 4px" }}>
-                          <div style={{ fontSize: "0.72rem", fontWeight: 700, color: COLOR.accent, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                            🙋‍♂️ Men's Wear
-                          </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                            {menCategories.map((cat) => (
-                              <Link
-                                key={cat._id}
-                                to={`/products?category=${cat.slug}`}
-                                style={{
-                                  padding: "6px 8px",
-                                  color: COLOR.text,
-                                  textDecoration: "none",
-                                  fontSize: "0.82rem",
-                                  fontWeight: 500,
-                                }}
-                                onClick={() => setMenuOpen(false)}
-                              >
-                                {cat.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {kidsCategories.length > 0 && (
-                        <div style={{ padding: "10px 16px 12px" }}>
-                          <div style={{ fontSize: "0.72rem", fontWeight: 700, color: COLOR.accent, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                            👧 Kids' Wear
-                          </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                            {kidsCategories.map((cat) => (
-                              <Link
-                                key={cat._id}
-                                to={`/products?category=${cat.slug}`}
-                                style={{
-                                  padding: "6px 8px",
-                                  color: COLOR.text,
-                                  textDecoration: "none",
-                                  fontSize: "0.82rem",
-                                  fontWeight: 500,
-                                }}
-                                onClick={() => setMenuOpen(false)}
-                              >
-                                {cat.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
 
               <button type="button" style={drawerLinkStyle} onClick={() => goToProfileTab("details")}>
                 <FaUser size={13} /> My Profile
