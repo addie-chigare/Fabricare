@@ -1,11 +1,12 @@
 import axios from "axios";
 
-export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+export const BASE_URL = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
 
 // Global interceptor for standard axios imports to redirect to our BASE_URL
 axios.interceptors.request.use((config) => {
-  if (config.url && config.url.startsWith("http://localhost:8000/api/v1")) {
-    config.url = config.url.replace("http://localhost:8000/api/v1", BASE_URL);
+  if (config.url && config.url.includes("localhost:8000")) {
+    config.url = config.url.replace(/https?:\/\/localhost:8000\/api\/v1/, BASE_URL);
+    config.url = config.url.replace(/https?:\/\/localhost:8000/, `${window.location.protocol}//${window.location.hostname}:8000`);
   }
   
   // Also pass the Authorization token if present
