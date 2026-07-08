@@ -289,7 +289,7 @@ const AppNavbar = () => {
     backgroundClip: "text",
   };
 
-  const navLinkStyle = (active) => ({
+  const navLinkStyle = () => ({
     display: "inline-flex",
     alignItems: "center",
     gap: 4,
@@ -482,20 +482,7 @@ const AppNavbar = () => {
     fontFamily: FONT_SANS,
   };
 
-  const drawerBtnStyle = (solid) => ({
-    flex: 1,
-    textAlign: "center",
-    padding: 12,
-    borderRadius: 999,
-    fontSize: "0.82rem",
-    fontWeight: 600,
-    letterSpacing: "0.04em",
-    textTransform: "uppercase",
-    textDecoration: "none",
-    background: solid ? COLOR.text : "transparent",
-    color: solid ? "#fff" : COLOR.text,
-    border: `1px solid ${COLOR.text}`,
-  });
+
 
   /* ---------------------- render ---------------------- */
 
@@ -660,7 +647,7 @@ const AppNavbar = () => {
                 style={iconBtnStyle(isHover("wishlist"))}
                 onMouseEnter={() => setHoverId("wishlist")}
                 onMouseLeave={() => setHoverId(null)}
-                onClick={() => goToProfileTab("wishlist")}
+                onClick={() => navigate("/wishlist")}
               >
                 <FaHeart size={17} color={COLOR.danger} />
                 {wishlistCount > 0 && <span style={badgeStyle}>{wishlistCount}</span>}
@@ -765,7 +752,7 @@ const AppNavbar = () => {
                         style={dropdownItemStyle(isHover("d-wishlist"))}
                         onMouseEnter={() => setHoverId("d-wishlist")}
                         onMouseLeave={() => setHoverId(null)}
-                        onClick={() => goToProfileTab("wishlist")}
+                        onClick={() => { setProfileOpen(false); navigate("/wishlist"); }}
                       >
                         <FaHeart size={13} /> Wishlist
                         {wishlistCount > 0 && (
@@ -1008,7 +995,7 @@ const AppNavbar = () => {
                       {menCategories.length > 0 && (
                         <div style={{ padding: "10px 16px 4px" }}>
                           <div style={{ fontSize: "0.72rem", fontWeight: 700, color: COLOR.accent, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                            🙋‍♂️ Men's Wear
+                            🙋‍♂️ Men&apos;s Wear
                           </div>
                           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                             {menCategories.map((cat) => (
@@ -1034,7 +1021,7 @@ const AppNavbar = () => {
                       {kidsCategories.length > 0 && (
                         <div style={{ padding: "10px 16px 12px" }}>
                           <div style={{ fontSize: "0.72rem", fontWeight: 700, color: COLOR.accent, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                            👧 Kids' Wear
+                            👧 Kids&apos; Wear
                           </div>
                           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                             {kidsCategories.map((cat) => (
@@ -1070,7 +1057,7 @@ const AppNavbar = () => {
               <button type="button" style={drawerLinkStyle} onClick={() => goToProfileTab("addresses")}>
                 <FaMapMarkerAlt size={13} /> My Address
               </button>
-              <button type="button" style={drawerLinkStyle} onClick={() => goToProfileTab("wishlist")}>
+              <button type="button" style={drawerLinkStyle} onClick={() => { setMenuOpen(false); navigate("/wishlist"); }}>
                 <FaHeart size={13} color={COLOR.danger} /> Wishlist
                 {wishlistCount > 0 && (
                   <span style={{ marginLeft: "auto", background: COLOR.danger, color: "#fff", borderRadius: 999, fontSize: "0.68rem", padding: "1px 6px" }}>

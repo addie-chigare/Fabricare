@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Container, Row, Col, Card, Form, Button, Alert, Badge, Spinner, Nav, Table } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Alert, Badge, Spinner, Nav } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -12,14 +12,12 @@ import {
   FaSignOutAlt,
   FaEdit,
   FaTrash,
-  FaPlus,
   FaCheck,
   FaCalendarAlt,
   FaPhone,
-  FaKey,
-  FaCreditCard,
   FaShippingFast,
-  FaHeart
+  FaHeart,
+  FaClock
 } from "react-icons/fa";
 
 const Profile = () => {

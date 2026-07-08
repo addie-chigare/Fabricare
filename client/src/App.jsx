@@ -25,6 +25,7 @@ import MyAddress from "./user/pages/MyAddress";
 import Checkout from "./user/pages/Checkout";
 import OrderSuccess from "./user/pages/OrderSuccess";
 import Profile from "./user/pages/Profile";
+import Wishlist from "./user/pages/Wishlist";
 
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -90,6 +91,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ProductDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="wishlist"
+              element={
+                <ProtectedRoute>
+                  <Wishlist />
                 </ProtectedRoute>
               }
             />

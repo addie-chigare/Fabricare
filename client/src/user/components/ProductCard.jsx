@@ -1,9 +1,8 @@
 import { Card, Badge, Alert } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import AnimatedAddToCart from "./AnimatedAddToCart";
 import axios from "axios";
 
@@ -69,6 +68,9 @@ const ProductCard = ({ product }) => {
       const user = JSON.parse(localStorage.getItem("user")) || {};
       user.wishlist = res.data.wishlist;
       localStorage.setItem("user", JSON.stringify(user));
+
+      // Dispatch event to update navbar wishlist badge
+      window.dispatchEvent(new Event("wishlist-updated"));
     } catch (err) {
       console.error("Wishlist error:", err);
     }
