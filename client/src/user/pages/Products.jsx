@@ -28,6 +28,7 @@ const Products = () => {
   // Pagination & Layout States
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileSortOpen, setMobileSortOpen] = useState(false);
   const productsPerPage = 12;
 
   // 🔥 Fetch initial data
@@ -607,18 +608,8 @@ const Products = () => {
           <Col lg={9}>
             {/* TOOLBAR (Mobile Filters Trigger, Sorting, View Info) */}
             <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 bg-white p-3 rounded-4 shadow-sm border mb-4">
-              {/* Mobile Filter Toggle */}
-              <Button
-                variant="outline-dark"
-                className="d-lg-none d-flex align-items-center gap-2 py-2 px-3 rounded-3"
-                onClick={() => setMobileFiltersOpen(true)}
-              >
-                <FaSlidersH size={13} />
-                <span className="small fw-semibold">Filters</span>
-                {isSubFilterActive && <Badge bg="primary" pill className="ms-1 smaller">✓</Badge>}
-              </Button>
-
-              <div className="d-none d-sm-block">
+              {/* Desktop Showing Count (visible only on lg and larger) */}
+              <div className="d-none d-lg-block">
                 <span className="text-muted small">
                   Showing <strong className="text-dark">{filteredProducts.length > 0 ? indexOfFirstProduct + 1 : 0}</strong>–
                   <strong className="text-dark">{Math.min(indexOfLastProduct, filteredProducts.length)}</strong> of{" "}
@@ -626,20 +617,47 @@ const Products = () => {
                 </span>
               </div>
 
-              {/* Sorting Select */}
-              <div className="d-flex align-items-center gap-2 ms-auto ms-lg-0">
-                <span className="d-none d-md-inline text-muted small"><FaSortAmountDown className="me-1" size={12} /> Sort By:</span>
+              {/* Desktop Sorting Select (visible only on lg and larger) */}
+              <div className="d-none d-lg-flex align-items-center gap-2 ms-auto">
+                <span className="text-muted small"><FaSortAmountDown className="me-1" size={12} /> Sort By:</span>
                 <Form.Select
                   className="py-2 border bg-white rounded-3 shadow-none fw-semibold text-muted text-capitalize"
                   style={{ minWidth: "160px", fontSize: "0.8rem", cursor: "pointer" }}
                   value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
+                  onChange={(e) => {
+                    setSortOrder(e.target.value);
+                    setCurrentPage(1);
+                  }}
                 >
                   <option value="">Default Sorting</option>
                   <option value="low">Price: Low to High</option>
                   <option value="high">Price: High to Low</option>
                   <option value="newest">Newest Arrival</option>
                 </Form.Select>
+              </div>
+
+              {/* Mobile Actions Container (visible only on screens smaller than lg) */}
+              <div className="d-flex d-lg-none w-100 gap-2">
+                <Button
+                  variant="outline-dark"
+                  className="flex-grow-1 d-flex align-items-center justify-content-center gap-2 py-2.5 rounded-3"
+                  onClick={() => setMobileFiltersOpen(true)}
+                  style={{ fontSize: "0.82rem" }}
+                >
+                  <FaSlidersH size={12} />
+                  <span className="fw-semibold">Filter</span>
+                  {isSubFilterActive && <Badge bg="primary" pill className="ms-1 smaller">✓</Badge>}
+                </Button>
+                <Button
+                  variant="outline-dark"
+                  className="flex-grow-1 d-flex align-items-center justify-content-center gap-2 py-2.5 rounded-3"
+                  onClick={() => setMobileSortOpen(true)}
+                  style={{ fontSize: "0.82rem" }}
+                >
+                  <FaSortAmountDown size={12} />
+                  <span className="fw-semibold">Sort By</span>
+                  {sortOrder !== "" && <Badge bg="primary" pill className="ms-1 smaller">✓</Badge>}
+                </Button>
               </div>
             </div>
 
@@ -788,6 +806,51 @@ const Products = () => {
           </div>
 
           {renderFilterWidgets()}
+        </Offcanvas.Body>
+      </Offcanvas>
+
+      {/* MOBILE SORTING OFFCANVAS DRAWER (BOTTOM SHEET) */}
+      <Offcanvas
+        show={mobileSortOpen}
+        onHide={() => setMobileSortOpen(false)}
+        placement="bottom"
+        style={{ height: "auto", borderTopLeftRadius: "1.5rem", borderTopRightRadius: "1.5rem" }}
+      >
+        <Offcanvas.Header closeButton className="pb-2 border-bottom">
+          <Offcanvas.Title className="fw-bold text-dark fs-6">Sort Products By</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body className="p-3">
+          <div className="d-flex flex-column gap-2">
+            {[
+              { label: "Default Sorting", value: "" },
+              { label: "Price: Low to High", value: "low" },
+              { label: "Price: High to Low", value: "high" },
+              { label: "Newest Arrival", value: "newest" }
+            ].map((opt) => {
+              const isSelected = sortOrder === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => {
+                    setSortOrder(opt.value);
+                    setMobileSortOpen(false);
+                    setCurrentPage(1);
+                  }}
+                  className={`btn text-start w-100 py-2.5 px-3 rounded-3 d-flex justify-content-between align-items-center border-0 ${
+                    isSelected ? "fw-bold text-primary" : "text-muted bg-transparent"
+                  }`}
+                  style={{
+                    fontSize: "0.9rem",
+                    backgroundColor: isSelected ? "rgba(99, 102, 241, 0.08)" : "transparent"
+                  }}
+                >
+                  <span>{opt.label}</span>
+                  {isSelected && <span className="text-primary fw-bold">✓</span>}
+                </button>
+              );
+            })}
+          </div>
         </Offcanvas.Body>
       </Offcanvas>
     </Container>

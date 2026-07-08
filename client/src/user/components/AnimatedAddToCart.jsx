@@ -9,7 +9,7 @@ const AnimatedAddToCart = ({ onClick, added, loading, className }) => {
       className={`fw-bold position-relative overflow-hidden ${className}`}
       onClick={onClick}
       disabled={loading || added}
-      style={{ minHeight: "45px", transition: "background-color 0.3s ease" }}
+      style={{ minHeight: "38px", fontSize: "0.82rem", transition: "background-color 0.3s ease" }}
     >
       <AnimatePresence mode="wait">
         {!added ? (
@@ -21,7 +21,9 @@ const AnimatedAddToCart = ({ onClick, added, loading, className }) => {
             transition={{ duration: 0.2 }}
             className="d-flex align-items-center justify-content-center gap-2"
           >
-            <FaShoppingCart /> Add to Cart
+            <FaShoppingCart size={13} />
+            <span className="d-none d-sm-inline">Add to Cart</span>
+            <span className="d-inline d-sm-none">Add</span>
           </motion.div>
         ) : (
           <motion.div
@@ -32,7 +34,9 @@ const AnimatedAddToCart = ({ onClick, added, loading, className }) => {
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
             className="d-flex align-items-center justify-content-center gap-2"
           >
-            <FaCheck /> Added!
+            <FaCheck size={13} />
+            <span className="d-none d-sm-inline">Added!</span>
+            <span className="d-inline d-sm-none">Added</span>
           </motion.div>
         )}
       </AnimatePresence>
