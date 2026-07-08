@@ -264,6 +264,30 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
+export const deleteOrder = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Access denied. Admin only",
+      });
+    }
+
+    const order = await Order.findByIdAndDelete(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+      });
+    }
+
+    res.json({
+      message: "Order deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const getSingleOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)

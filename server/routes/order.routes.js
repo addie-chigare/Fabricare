@@ -10,7 +10,8 @@ import {
   getDashboardStats,
   getMonthlyRevenue,
   getPendingOrders,
-  getTopProducts
+  getTopProducts,
+  deleteOrder
 } from "../controllers/orderController.js";
 
 const router = express.Router();
@@ -27,6 +28,7 @@ router.put("/cancel/:id", auth, cancelOrder);
 router.get("/admin", auth, isAdmin, getAllOrders);
 
 router.put("/admin/status/:id", auth, isAdmin, updateOrderStatus);
+router.delete("/admin/delete/:id", auth, isAdmin, deleteOrder);
 
 
 // 🔹 DASHBOARD

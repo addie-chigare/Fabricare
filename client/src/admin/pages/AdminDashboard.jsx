@@ -1,7 +1,7 @@
 import { FaBoxOpen, FaShoppingCart, FaUsers, FaRupeeSign, FaArrowUp, FaArrowDown, FaPlus, FaUserPlus, FaListAlt, FaCog, FaHistory, FaExclamationTriangle } from "react-icons/fa";
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import API from "../../services/api";
 import PropTypes from "prop-types";
 
 import RevenueChart from "../components/RevenueChart";
@@ -52,7 +52,7 @@ const AdminDashboard = () => {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/v1/products/all", {
+      const res = await API.get("/products/all", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProductCount(res.data.length);
@@ -62,7 +62,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/v1/admin/users", {
+      const res = await API.get("/admin/users", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUserCount(res.data.length);
@@ -71,7 +71,7 @@ const AdminDashboard = () => {
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/v1/orders/dashboard/stats", {
+      const res = await API.get("/orders/dashboard/stats", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setOrderCount(res.data.totalOrders);

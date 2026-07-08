@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
-import { FaSearch } from "react-icons/fa";
+import API from "../../services/api";
+import { FaSearch, FaTrash } from "react-icons/fa";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -12,7 +12,7 @@ const AdminOrders = () => {
 
   const fetchOrders = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/v1/orders/admin", {
+      const res = await API.get("/orders/admin", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data);
@@ -27,11 +27,23 @@ const AdminOrders = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await axios.put(
-        `http://localhost:8000/api/v1/orders/admin/status/${id}`,
+      await API.put(
+        `/orders/admin/status/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } },
       );
+      fetchOrders();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this order permanently?")) return;
+    try {
+      await API.delete(`/orders/admin/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       fetchOrders();
     } catch (error) {
       console.log(error);
@@ -95,7 +107,8 @@ const AdminOrders = () => {
                 <th>Products</th>
                 <th>Total</th>
                 <th>Status</th>
-                <th className="text-end">Update Status</th>
+                <th>Update Status</th>
+                <th className="text-end">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -128,9 +141,9 @@ const AdminOrders = () => {
                         {order.status}
                       </span>
                     </td>
-                    <td className="text-end">
+                    <td>
                       <select
-                        className="form-select form-select-sm ms-auto"
+                        className="form-select form-select-sm"
                         style={{ width: '130px' }}
                         value={order.status}
                         onChange={(e) => updateStatus(order._id, e.target.value)}
@@ -142,11 +155,21 @@ const AdminOrders = () => {
                         <option value="Cancelled">Cancelled</option>
                       </select>
                     </td>
+                    <td className="text-end">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-link text-danger p-2 hover-bg-light rounded-circle border-0"
+                        onClick={() => handleDelete(order._id)}
+                        title="Delete Order"
+                      >
+                        <FaTrash size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center py-5 text-muted">No orders found.</td>
+                  <td colSpan="7" className="text-center py-5 text-muted">No orders found.</td>
                 </tr>
               )}
             </tbody>
