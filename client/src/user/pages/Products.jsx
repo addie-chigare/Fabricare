@@ -287,10 +287,10 @@ const Products = () => {
       {/* Categories Widget */}
       <div className="mb-4 pb-4 border-bottom">
         <h6 className="fw-bold mb-3 text-uppercase text-muted small" style={{ letterSpacing: "0.05em" }}>Categories</h6>
-        <div className="d-flex flex-column gap-1.5">
+        <div className="d-flex flex-column gap-1">
           <button
             onClick={() => handleCategoryChange("")}
-            className={`btn btn-sm text-start py-2 px-2.5 rounded-3 border-0 transition ${
+            className={`btn btn-sm text-start py-2 px-2.5 rounded-3 border-0 transition mb-2 ${
               !categoryFilter ? "fw-bold text-primary bg-light-blue" : "text-muted bg-transparent"
             }`}
             style={{
@@ -300,27 +300,56 @@ const Products = () => {
           >
             All Collection
           </button>
-          {categories.map((cat) => {
-            const isSelected = categoryFilter === cat.slug;
-            return (
-              <button
-                key={cat._id}
-                onClick={() => handleCategoryChange(cat.slug)}
-                className={`btn btn-sm text-start py-2 px-2.5 rounded-3 border-0 d-flex justify-content-between align-items-center transition ${
-                  isSelected ? "fw-bold text-primary bg-light-blue" : "text-muted bg-transparent"
-                }`}
-                style={{
-                  fontSize: "0.85rem",
-                  backgroundColor: isSelected ? "rgba(99, 102, 241, 0.08)" : "transparent"
-                }}
-              >
-                <span>{cat.name}</span>
-                <span className="badge rounded-pill bg-light text-muted border smaller font-monospace">
-                  {cat.type === "men" ? "men" : "kids"}
-                </span>
-              </button>
-            );
-          })}
+
+          {/* Men's Wear Section */}
+          <div className="small fw-bold text-dark text-uppercase tracking-wider mb-2 mt-1" style={{ fontSize: "0.72rem", letterSpacing: "0.05em" }}>
+            🙋‍♂️ Men&apos;s Wear
+          </div>
+          <div className="d-flex flex-column gap-1 ps-2 mb-3 border-start">
+            {categories.filter(cat => cat && cat.type === "men").map((cat) => {
+              const isSelected = categoryFilter === cat.slug;
+              return (
+                <button
+                  key={cat._id}
+                  onClick={() => handleCategoryChange(cat.slug)}
+                  className={`btn btn-sm text-start py-1.5 px-2.5 rounded-3 border-0 transition ${
+                    isSelected ? "fw-bold text-primary bg-light-blue" : "text-muted bg-transparent"
+                  }`}
+                  style={{
+                    fontSize: "0.82rem",
+                    backgroundColor: isSelected ? "rgba(99, 102, 241, 0.08)" : "transparent"
+                  }}
+                >
+                  {cat.name}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Kids' Wear Section */}
+          <div className="small fw-bold text-dark text-uppercase tracking-wider mb-2 mt-1" style={{ fontSize: "0.72rem", letterSpacing: "0.05em" }}>
+            👧 Kids&apos; Wear
+          </div>
+          <div className="d-flex flex-column gap-1 ps-2 border-start">
+            {categories.filter(cat => cat && cat.type === "kids").map((cat) => {
+              const isSelected = categoryFilter === cat.slug;
+              return (
+                <button
+                  key={cat._id}
+                  onClick={() => handleCategoryChange(cat.slug)}
+                  className={`btn btn-sm text-start py-1.5 px-2.5 rounded-3 border-0 transition ${
+                    isSelected ? "fw-bold text-primary bg-light-blue" : "text-muted bg-transparent"
+                  }`}
+                  style={{
+                    fontSize: "0.82rem",
+                    backgroundColor: isSelected ? "rgba(99, 102, 241, 0.08)" : "transparent"
+                  }}
+                >
+                  {cat.name}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
