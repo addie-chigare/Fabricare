@@ -40,11 +40,7 @@ const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const FONT_SERIF = "'Cormorant Garamond', Georgia, serif";
 const FONT_SANS = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
 
-const NAV_LINKS = [
-  { label: "Home", to: "/" },
-  { label: "Products", to: "/products" },
-  { label: "Laundry", href: "/#laundry-section" },
-];
+
 
 const AppNavbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -505,35 +501,145 @@ const AppNavbar = () => {
           {/* Desktop nav links */}
           {isDesktop && (
             <nav style={{ display: "flex", alignItems: "center", gap: 26, marginLeft: 8 }}>
-              {NAV_LINKS.map((item) =>
-                item.href ? (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    style={navLinkStyle()}
-                    onMouseEnter={() => setHoverId(item.label)}
-                    onMouseLeave={() => setHoverId(null)}
+              {/* Home */}
+              <NavLink
+                to="/"
+                onMouseEnter={() => setHoverId("Home")}
+                onMouseLeave={() => setHoverId(null)}
+                style={navLinkStyle()}
+              >
+                {({ isActive }) => (
+                  <>
+                    Home
+                    <span style={underlineStyle(isHover("Home") || isActive)} />
+                  </>
+                )}
+              </NavLink>
+
+              {/* Men's Collection Dropdown */}
+              <div
+                className="position-relative"
+                onMouseEnter={() => setHoverId("men-dropdown")}
+                onMouseLeave={() => setHoverId(null)}
+                style={{ display: "inline-block" }}
+              >
+                <button
+                  type="button"
+                  style={{
+                    ...navLinkStyle(),
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                  }}
+                >
+                  Men&apos;s Wear <span className="ms-1" style={{ fontSize: "0.6rem" }}>▼</span>
+                  <span style={underlineStyle(isHover("men-dropdown"))} />
+                </button>
+                {hoverId === "men-dropdown" && menCategories.length > 0 && (
+                  <div
+                    className="position-absolute shadow border rounded-3 p-2 bg-white"
+                    style={{
+                      top: "100%",
+                      left: 0,
+                      zIndex: 1000,
+                      minWidth: "180px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                      marginTop: "10px",
+                    }}
                   >
-                    <FaTshirt size={12} /> {item.label}
-                    <span style={underlineStyle(isHover(item.label))} />
-                  </a>
-                ) : (
-                  <NavLink
-                    key={item.label}
-                    to={item.to}
-                    onMouseEnter={() => setHoverId(item.label)}
-                    onMouseLeave={() => setHoverId(null)}
-                    style={navLinkStyle()}
+                    {menCategories.map((cat) => (
+                      <Link
+                        key={cat._id}
+                        to={`/products?category=${cat.slug}`}
+                        className="dropdown-item px-3 py-2 rounded-2 small text-dark text-decoration-none hover-bg-light fw-semibold"
+                        style={{ fontSize: "0.82rem" }}
+                        onClick={() => setHoverId(null)}
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Kids' Collection Dropdown */}
+              <div
+                className="position-relative"
+                onMouseEnter={() => setHoverId("kids-dropdown")}
+                onMouseLeave={() => setHoverId(null)}
+                style={{ display: "inline-block" }}
+              >
+                <button
+                  type="button"
+                  style={{
+                    ...navLinkStyle(),
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                  }}
+                >
+                  Kids&apos; Wear <span className="ms-1" style={{ fontSize: "0.6rem" }}>▼</span>
+                  <span style={underlineStyle(isHover("kids-dropdown"))} />
+                </button>
+                {hoverId === "kids-dropdown" && kidsCategories.length > 0 && (
+                  <div
+                    className="position-absolute shadow border rounded-3 p-2 bg-white"
+                    style={{
+                      top: "100%",
+                      left: 0,
+                      zIndex: 1000,
+                      minWidth: "180px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                      marginTop: "10px",
+                    }}
                   >
-                    {({ isActive }) => (
-                      <>
-                        {item.label}
-                        <span style={underlineStyle(isHover(item.label) || isActive)} />
-                      </>
-                    )}
-                  </NavLink>
-                )
-              )}
+                    {kidsCategories.map((cat) => (
+                      <Link
+                        key={cat._id}
+                        to={`/products?category=${cat.slug}`}
+                        className="dropdown-item px-3 py-2 rounded-2 small text-dark text-decoration-none hover-bg-light fw-semibold"
+                        style={{ fontSize: "0.82rem" }}
+                        onClick={() => setHoverId(null)}
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Products */}
+              <NavLink
+                to="/products"
+                onMouseEnter={() => setHoverId("Products")}
+                onMouseLeave={() => setHoverId(null)}
+                style={navLinkStyle()}
+              >
+                {({ isActive }) => (
+                  <>
+                    All Products
+                    <span style={underlineStyle(isHover("Products") || isActive)} />
+                  </>
+                )}
+              </NavLink>
+
+              {/* Laundry */}
+              <a
+                href="/#laundry-section"
+                style={navLinkStyle()}
+                onMouseEnter={() => setHoverId("Laundry")}
+                onMouseLeave={() => setHoverId(null)}
+              >
+                Laundry
+                <span style={underlineStyle(isHover("Laundry"))} />
+              </a>
+
               {token && (
                 <NavLink
                   to="/orders"
