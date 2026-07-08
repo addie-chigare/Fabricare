@@ -1,9 +1,8 @@
-import { Card, Badge, Alert } from "react-bootstrap";
+import { Card, Badge, Alert, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaStar, FaHeart, FaRegHeart, FaShoppingCart, FaCheck, FaBolt } from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
-import AnimatedAddToCart from "./AnimatedAddToCart";
 import axios from "axios";
 
 const ProductCard = ({ product }) => {
@@ -45,6 +44,34 @@ const ProductCard = ({ product }) => {
     setTimeout(() => {
       setAdded(false);
     }, 2000);
+  };
+
+  const handleBuyNow = (e) => {
+    e.stopPropagation(); // Prevent card navigation
+    if (product.stock === 0) {
+      alert("Product is out of stock");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!token) {
+      alert("Please login first");
+      navigate("/login");
+      return;
+    }
+
+    if (user?.role === "admin") {
+      alert("Please login as user to purchase products");
+      return;
+    }
+
+    // Add to cart
+    addToCart(product);
+    
+    // Redirect to checkout
+    navigate("/checkout");
   };
 
   const toggleWishlist = async (e) => {
@@ -200,13 +227,35 @@ const ProductCard = ({ product }) => {
             )}
           </div>
 
-          {/* Action Button */}
-          <div className="mt-3">
-            <AnimatedAddToCart
+          {/* Action Buttons */}
+          <div className="d-flex gap-2 mt-3">
+            <Button
+              variant={added ? "success" : "outline-primary"}
+              className="flex-grow-1 py-1.5 px-2 d-flex align-items-center justify-content-center gap-1 fw-bold text-nowrap"
+              style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px" }}
               onClick={handleAddToCart}
-              added={added}
               disabled={product.stock === 0}
-            />
+            >
+              {added ? (
+                <>
+                  <FaCheck size={11} /> <span>Added</span>
+                </>
+              ) : (
+                <>
+                  <FaShoppingCart size={11} /> <span>Add</span>
+                </>
+              )}
+            </Button>
+            
+            <Button
+              variant="primary"
+              className="flex-grow-1 py-1.5 px-2 d-flex align-items-center justify-content-center gap-1 fw-bold text-nowrap"
+              style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px" }}
+              onClick={handleBuyNow}
+              disabled={product.stock === 0}
+            >
+              <FaBolt size={11} /> <span>Buy Now</span>
+            </Button>
           </div>
         </Card.Body>
       </Card>
