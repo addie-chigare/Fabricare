@@ -122,8 +122,12 @@ const AppNavbar = () => {
     fetchCategories();
   }, [fetchCategories]);
 
-  const menCategories = categories.filter((cat) => cat.type === "men");
-  const kidsCategories = categories.filter((cat) => cat.type === "kids");
+  const groupedCategories = categories.reduce((acc, cat) => {
+    if (!cat.type) return acc;
+    if (!acc[cat.type]) acc[cat.type] = [];
+    acc[cat.type].push(cat);
+    return acc;
+  }, {});
 
   const applyTheme = (t) => {
     if (t === "dark") {
@@ -516,103 +520,61 @@ const AppNavbar = () => {
                 )}
               </NavLink>
 
-              {/* Men's Collection Dropdown */}
-              <div
-                className="position-relative"
-                onMouseEnter={() => setHoverId("men-dropdown")}
-                onMouseLeave={() => setHoverId(null)}
-                style={{ display: "inline-block" }}
-              >
-                <button
-                  type="button"
-                  style={{
-                    ...navLinkStyle(),
-                    background: "none",
-                    border: "none",
-                    padding: 0,
-                    cursor: "pointer",
-                  }}
-                >
-                  Men&apos;s Wear <span className="ms-1" style={{ fontSize: "0.6rem" }}>▼</span>
-                  <span style={underlineStyle(isHover("men-dropdown"))} />
-                </button>
-                {hoverId === "men-dropdown" && menCategories.length > 0 && (
+              {Object.keys(groupedCategories).map((typeKey) => {
+                const subCats = groupedCategories[typeKey];
+                const dropId = `${typeKey}-dropdown`;
+                const displayName = typeKey.charAt(0).toUpperCase() + typeKey.slice(1) + "'s Wear";
+                return (
                   <div
-                    className="position-absolute shadow border rounded-3 p-2 bg-white"
-                    style={{
-                      top: "100%",
-                      left: 0,
-                      zIndex: 1000,
-                      minWidth: "180px",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                      marginTop: "10px",
-                    }}
+                    key={typeKey}
+                    className="position-relative"
+                    onMouseEnter={() => setHoverId(dropId)}
+                    onMouseLeave={() => setHoverId(null)}
+                    style={{ display: "inline-block" }}
                   >
-                    {menCategories.map((cat) => (
-                      <Link
-                        key={cat._id}
-                        to={`/products?category=${cat.slug}`}
-                        className="dropdown-item px-3 py-2 rounded-2 small text-dark text-decoration-none hover-bg-light fw-semibold"
-                        style={{ fontSize: "0.82rem" }}
-                        onClick={() => setHoverId(null)}
+                    <button
+                      type="button"
+                      style={{
+                        ...navLinkStyle(),
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {displayName} <span className="ms-1" style={{ fontSize: "0.6rem" }}>▼</span>
+                      <span style={underlineStyle(isHover(dropId))} />
+                    </button>
+                    {hoverId === dropId && subCats.length > 0 && (
+                      <div
+                        className="position-absolute shadow border rounded-3 p-2 bg-white"
+                        style={{
+                          top: "100%",
+                          left: 0,
+                          zIndex: 1000,
+                          minWidth: "180px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "4px",
+                          marginTop: "10px",
+                        }}
                       >
-                        {cat.name}
-                      </Link>
-                    ))}
+                        {subCats.map((cat) => (
+                          <Link
+                            key={cat._id}
+                            to={`/products?category=${cat.slug}`}
+                            className="dropdown-item px-3 py-2 rounded-2 small text-dark text-decoration-none hover-bg-light fw-semibold"
+                            style={{ fontSize: "0.82rem" }}
+                            onClick={() => setHoverId(null)}
+                          >
+                            {cat.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-
-              {/* Kids' Collection Dropdown */}
-              <div
-                className="position-relative"
-                onMouseEnter={() => setHoverId("kids-dropdown")}
-                onMouseLeave={() => setHoverId(null)}
-                style={{ display: "inline-block" }}
-              >
-                <button
-                  type="button"
-                  style={{
-                    ...navLinkStyle(),
-                    background: "none",
-                    border: "none",
-                    padding: 0,
-                    cursor: "pointer",
-                  }}
-                >
-                  Kids&apos; Wear <span className="ms-1" style={{ fontSize: "0.6rem" }}>▼</span>
-                  <span style={underlineStyle(isHover("kids-dropdown"))} />
-                </button>
-                {hoverId === "kids-dropdown" && kidsCategories.length > 0 && (
-                  <div
-                    className="position-absolute shadow border rounded-3 p-2 bg-white"
-                    style={{
-                      top: "100%",
-                      left: 0,
-                      zIndex: 1000,
-                      minWidth: "180px",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                      marginTop: "10px",
-                    }}
-                  >
-                    {kidsCategories.map((cat) => (
-                      <Link
-                        key={cat._id}
-                        to={`/products?category=${cat.slug}`}
-                        className="dropdown-item px-3 py-2 rounded-2 small text-dark text-decoration-none hover-bg-light fw-semibold"
-                        style={{ fontSize: "0.82rem" }}
-                        onClick={() => setHoverId(null)}
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+                );
+              })}
 
               {/* Products */}
               <NavLink
@@ -1098,57 +1060,36 @@ const AppNavbar = () => {
                       transition={{ duration: 0.2 }}
                       style={{ overflow: "hidden", background: COLOR.surface, paddingLeft: 12 }}
                     >
-                      {menCategories.length > 0 && (
-                        <div style={{ padding: "10px 16px 4px" }}>
-                          <div style={{ fontSize: "0.72rem", fontWeight: 700, color: COLOR.accent, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                            🙋‍♂️ Men&apos;s Wear
+                      {Object.keys(groupedCategories).map((typeKey) => {
+                        const subCats = groupedCategories[typeKey];
+                        const displayName = typeKey.charAt(0).toUpperCase() + typeKey.slice(1) + "'s Wear";
+                        const emoji = typeKey === "men" ? "🙋‍♂️ " : typeKey === "kids" ? "👧 " : typeKey === "women" ? "👩 " : typeKey === "girls" ? "👧 " : "🛍️ ";
+                        return (
+                          <div key={typeKey} style={{ padding: "10px 16px 4px" }}>
+                            <div style={{ fontSize: "0.72rem", fontWeight: 700, color: COLOR.accent, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
+                              {emoji}{displayName}
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                              {subCats.map((cat) => (
+                                <Link
+                                  key={cat._id}
+                                  to={`/products?category=${cat.slug}`}
+                                  style={{
+                                    padding: "6px 8px",
+                                    color: COLOR.text,
+                                    textDecoration: "none",
+                                    fontSize: "0.82rem",
+                                    fontWeight: 500,
+                                  }}
+                                  onClick={() => setMenuOpen(false)}
+                                >
+                                  {cat.name}
+                                </Link>
+                              ))}
+                            </div>
                           </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                            {menCategories.map((cat) => (
-                              <Link
-                                key={cat._id}
-                                to={`/products?category=${cat.slug}`}
-                                style={{
-                                  padding: "6px 8px",
-                                  color: COLOR.text,
-                                  textDecoration: "none",
-                                  fontSize: "0.82rem",
-                                  fontWeight: 500,
-                                }}
-                                onClick={() => setMenuOpen(false)}
-                              >
-                                {cat.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {kidsCategories.length > 0 && (
-                        <div style={{ padding: "10px 16px 12px" }}>
-                          <div style={{ fontSize: "0.72rem", fontWeight: 700, color: COLOR.accent, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                            👧 Kids&apos; Wear
-                          </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                            {kidsCategories.map((cat) => (
-                              <Link
-                                key={cat._id}
-                                to={`/products?category=${cat.slug}`}
-                                style={{
-                                  padding: "6px 8px",
-                                  color: COLOR.text,
-                                  textDecoration: "none",
-                                  fontSize: "0.82rem",
-                                  fontWeight: 500,
-                                }}
-                                onClick={() => setMenuOpen(false)}
-                              >
-                                {cat.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                        );
+                      })}
                     </motion.div>
                   )}
                 </AnimatePresence>

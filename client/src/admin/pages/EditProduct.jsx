@@ -44,6 +44,14 @@ const EditProduct = () => {
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState([]);
 
+  // Group categories dynamically by type for optgroups
+  const groupedCategories = categories.reduce((acc, cat) => {
+    if (!cat.type) return acc;
+    if (!acc[cat.type]) acc[cat.type] = [];
+    acc[cat.type].push(cat);
+    return acc;
+  }, {});
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -249,24 +257,15 @@ const EditProduct = () => {
                     required
                   >
                     <option value="">-- Select Category --</option>
-                    <optgroup label="Men's Collection">
-                      {categories
-                        .filter((c) => c.type === "men")
-                        .map((c) => (
+                    {Object.keys(groupedCategories).map((typeKey) => (
+                      <optgroup key={typeKey} label={`${typeKey.charAt(0).toUpperCase() + typeKey.slice(1)}'s Collection`}>
+                        {groupedCategories[typeKey].map((c) => (
                           <option key={c._id} value={c.slug}>
                             {c.name}
                           </option>
                         ))}
-                    </optgroup>
-                    <optgroup label="Kids' Collection">
-                      {categories
-                        .filter((c) => c.type === "kids")
-                        .map((c) => (
-                          <option key={c._id} value={c.slug}>
-                            {c.name}
-                          </option>
-                        ))}
-                    </optgroup>
+                      </optgroup>
+                    ))}
                   </select>
                 </div>
                 <div className="col-md-6 mt-3">

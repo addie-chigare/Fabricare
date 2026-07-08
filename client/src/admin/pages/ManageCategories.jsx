@@ -7,11 +7,17 @@ const ManageCategories = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [name, setName] = useState("");
   const [type, setType] = useState("men");
+  const [customType, setCustomType] = useState("");
+  const [isCustomType, setIsCustomType] = useState(false);
   const [slug, setSlug] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const uniqueTypes = [...new Set(categories.map((c) => c.type).filter(Boolean))];
+  if (!uniqueTypes.includes("men")) uniqueTypes.push("men");
+  if (!uniqueTypes.includes("kids")) uniqueTypes.push("kids");
 
   const token = localStorage.getItem("token");
   const categoriesPerPage = 10;
@@ -32,14 +38,15 @@ const ManageCategories = () => {
   // Auto-generate slug when name or type changes (unless user manually entered one)
   useEffect(() => {
     if (!editingId && name) {
-      const computedSlug = `${type}-${name}`
+      const activeType = isCustomType ? customType : type;
+      const computedSlug = `${activeType}-${name}`
         .toLowerCase()
         .trim()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)+/g, "");
       setSlug(computedSlug);
     }
-  }, [name, type, editingId]);
+  }, [name, type, customType, isCustomType, editingId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,11 +55,12 @@ const ManageCategories = () => {
     setSuccess("");
 
     try {
+      const resolvedType = isCustomType ? customType.trim().toLowerCase() : type;
       if (editingId) {
         // Edit Mode
         const res = await axios.put(
           `http://localhost:8000/api/v1/categories/admin/update/${editingId}`,
-          { name, type, slug },
+          { name, type: resolvedType, slug },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setSuccess(res.data.message || "Category updated successfully");
@@ -61,7 +69,7 @@ const ManageCategories = () => {
         // Add Mode
         const res = await axios.post(
           "http://localhost:8000/api/v1/categories/admin/create",
-          { name, type, slug },
+          { name, type: resolvedType, slug },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setSuccess(res.data.message || "Category created successfully");
@@ -79,6 +87,8 @@ const ManageCategories = () => {
     setEditingId(cat._id);
     setName(cat.name);
     setType(cat.type);
+    setIsCustomType(false);
+    setCustomType("");
     setSlug(cat.slug);
     setError("");
     setSuccess("");
@@ -88,6 +98,8 @@ const ManageCategories = () => {
     setEditingId(null);
     setName("");
     setType("men");
+    setIsCustomType(false);
+    setCustomType("");
     setSlug("");
     setError("");
   };
@@ -220,14 +232,40 @@ const ManageCategories = () => {
                 <label className="form-label small fw-semibold text-muted text-uppercase">Collection Type</label>
                 <select
                   className="form-select"
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  value={isCustomType ? "custom" : type}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "custom") {
+                      setIsCustomType(true);
+                    } else {
+                      setIsCustomType(false);
+                      setType(val);
+                    }
+                  }}
                   required
                 >
-                  <option value="men">Men's Collection</option>
-                  <option value="kids">Kids' Collection</option>
+                  {uniqueTypes.map((t) => (
+                    <option key={t} value={t}>
+                      {t.charAt(0).toUpperCase() + t.slice(1)}&apos;s Collection
+                    </option>
+                  ))}
+                  <option value="custom">+ Create New Collection Type</option>
                 </select>
               </div>
+
+              {isCustomType && (
+                <div className="mb-3">
+                  <label className="form-label small fw-semibold text-danger text-uppercase">New Collection Name (e.g. women, girls)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter type slug (lowercase, e.g. women)"
+                    value={customType}
+                    onChange={(e) => setCustomType(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
 
               <div className="mb-4">
                 <label className="form-label small fw-semibold text-muted text-uppercase">URL Slug</label>

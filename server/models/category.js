@@ -9,8 +9,8 @@ const categorySchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["men", "kids"],
       required: true,
+      trim: true,
     },
     slug: {
       type: String,

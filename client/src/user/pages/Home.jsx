@@ -14,36 +14,10 @@ import {
 } from "react-icons/fa";
 import API from "../../services/api";
 import ProductCard from "../components/ProductCard";
-import axios from "axios";
-
-const MENS_PILLS = [
-  { name: "Shirts", slug: "men-shirts" },
-  { name: "T-Shirts", slug: "men-t-shirts" },
-  { name: "Jeans", slug: "men-jeans" },
-  { name: "Trousers", slug: "men-trousers" },
-  { name: "Jackets", slug: "men-jackets" },
-  { name: "Hoodies", slug: "men-hoodies" },
-  { name: "Shorts", slug: "men-shorts" },
-  { name: "Ethnic Wear", slug: "men-ethnic-wear" },
-  { name: "Footwear", slug: "men-footwear" },
-  { name: "Accessories", slug: "men-accessories" }
-];
-
-const KIDS_PILLS = [
-  { name: "Shirts", slug: "kids-shirts" },
-  { name: "T-Shirts", slug: "kids-t-shirts" },
-  { name: "Jeans", slug: "kids-jeans" },
-  { name: "Shorts", slug: "kids-shorts" },
-  { name: "Dresses", slug: "kids-dresses" },
-  { name: "School Wear", slug: "kids-school-wear" },
-  { name: "Jackets", slug: "kids-jackets" },
-  { name: "Night Wear", slug: "kids-night-wear" },
-  { name: "Footwear", slug: "kids-footwear" },
-  { name: "Accessories", slug: "kids-accessories" }
-];
 
 const Home = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [banners, setBanners] = useState([]);
   const [settings, setSettings] = useState(null);
   const navigate = useNavigate();
@@ -59,7 +33,7 @@ const Home = () => {
     };
     const fetchBanners = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/banners/public");
+        const res = await API.get("/banners/public");
         setBanners(res.data);
       } catch (error) {
         console.error("Error fetching banners:", error);
@@ -67,32 +41,45 @@ const Home = () => {
     };
     const fetchSettings = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/settings");
+        const res = await API.get("/settings");
         setSettings(res.data);
       } catch (error) {
         console.error("Error fetching settings:", error);
       }
     };
+    const fetchCategories = async () => {
+      try {
+        const res = await API.get("/categories");
+        setCategories(res.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
     fetchProducts();
     fetchBanners();
     fetchSettings();
+    fetchCategories();
   }, []);
+
+  // Group categories dynamically by type
+  const groupedCategories = categories.reduce((acc, cat) => {
+    if (!cat.type) return acc;
+    if (!acc[cat.type]) acc[cat.type] = [];
+    acc[cat.type].push(cat);
+    return acc;
+  }, {});
+
+  const getProductsForType = (typeKey) => {
+    if (!groupedCategories[typeKey]) return [];
+    const slugs = groupedCategories[typeKey].map(c => c.slug);
+    return products.filter(p => p && slugs.includes(p.category)).slice(0, 4);
+  };
 
   // Filter collections
   let featuredProducts = products.filter(p => p.isFeatured).slice(0, 4);
   if (featuredProducts.length === 0) {
     featuredProducts = products.slice(0, 4);
   }
-
-  const mensCollection = products.filter(p => {
-    const cat = p.category?.toLowerCase() || "";
-    return cat.startsWith("men") || cat.includes("men") && !cat.includes("women");
-  }).slice(0, 4);
-
-  const kidsCollection = products.filter(p => {
-    const cat = p.category?.toLowerCase() || "";
-    return cat.startsWith("kids") || cat.includes("kid");
-  }).slice(0, 4);
 
   const handlePillClick = (slug) => {
     navigate(`/products?category=${slug}`);
@@ -243,42 +230,31 @@ const Home = () => {
           <p className="text-muted small">Choose a category to find precisely what you need</p>
         </div>
         <Row className="gy-4">
-          <Col md={6}>
-            <Card className="border-0 shadow-sm p-4 rounded-4 bg-white h-100">
-              <h5 className="fw-bold mb-3 pb-2 border-bottom text-dark">🙋‍♂️ Men's Wear</h5>
-              <div className="d-flex flex-wrap gap-2 category-grid-mobile">
-                {MENS_PILLS.map((pill) => (
-                  <Button
-                    key={pill.slug}
-                    variant="light"
-                    className="rounded-pill px-3 py-1.5 small fw-semibold border btn-category-pill"
-                    onClick={() => handlePillClick(pill.slug)}
-                    style={{ fontSize: "0.8rem" }}
-                  >
-                    {pill.name}
-                  </Button>
-                ))}
-              </div>
-            </Card>
-          </Col>
-          <Col md={6}>
-            <Card className="border-0 shadow-sm p-4 rounded-4 bg-white h-100">
-              <h5 className="fw-bold mb-3 pb-2 border-bottom text-dark">👧 Kids' Wear</h5>
-              <div className="d-flex flex-wrap gap-2 category-grid-mobile">
-                {KIDS_PILLS.map((pill) => (
-                  <Button
-                    key={pill.slug}
-                    variant="light"
-                    className="rounded-pill px-3 py-1.5 small fw-semibold border btn-category-pill"
-                    onClick={() => handlePillClick(pill.slug)}
-                    style={{ fontSize: "0.8rem" }}
-                  >
-                    {pill.name}
-                  </Button>
-                ))}
-              </div>
-            </Card>
-          </Col>
+          {Object.keys(groupedCategories).map((typeKey) => {
+            const subCats = groupedCategories[typeKey];
+            const displayName = typeKey.charAt(0).toUpperCase() + typeKey.slice(1) + "'s Wear";
+            const emoji = typeKey === "men" ? "🙋‍♂️ " : typeKey === "kids" ? "👧 " : typeKey === "women" ? "👩 " : typeKey === "girls" ? "👧 " : "🛍️ ";
+            return (
+              <Col key={typeKey} md={6} lg={4}>
+                <Card className="border-0 shadow-sm p-4 rounded-4 bg-white h-100">
+                  <h5 className="fw-bold mb-3 pb-2 border-bottom text-dark">{emoji}{displayName}</h5>
+                  <div className="d-flex flex-wrap gap-2 category-grid-mobile">
+                    {subCats.map((pill) => (
+                      <Button
+                        key={pill._id}
+                        variant="light"
+                        className="rounded-pill px-3 py-1.5 small fw-semibold border btn-category-pill"
+                        onClick={() => handlePillClick(pill.slug)}
+                        style={{ fontSize: "0.8rem" }}
+                      >
+                        {pill.name}
+                      </Button>
+                    ))}
+                  </div>
+                </Card>
+              </Col>
+            );
+          })}
         </Row>
       </Container>
 
@@ -304,53 +280,42 @@ const Home = () => {
         </Row>
       </Container>
 
-      {/* 👔 MEN'S COLLECTION SECTION */}
-      <Container className="mb-5">
-        <div className="d-flex align-items-center justify-content-between mb-4">
-          <div>
-            <h3 className="fw-bold mb-1 text-dark fs-4 fs-md-3">Men's Collection</h3>
-            <p className="text-muted small">Elevate your daily wardrobe with high comfort wear</p>
-          </div>
-          <Button as={Link} to="/products?category=men-shirts" variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1 flex-shrink-0">
-            <span>Shop Men's</span> <FaChevronRight size={10} />
-          </Button>
-        </div>
-        <Row className="px-1">
-          {mensCollection.length > 0 ? (
-            mensCollection.map((p) => <ProductCard key={p._id} product={p} />)
-          ) : (
-            <div className="text-center py-5 text-muted bg-white rounded-4 border w-100 shadow-sm d-flex flex-column align-items-center justify-content-center">
-              <span style={{ fontSize: "1.5rem" }}>👔</span>
-              <h6 className="fw-bold mt-2">No Men's Products Loaded</h6>
-              <p className="small text-muted mb-0">Use the admin panel to add products with a Men's category.</p>
+      {/* Grouped Dynamic Collections */}
+      {Object.keys(groupedCategories).map((typeKey) => {
+        const typeProducts = getProductsForType(typeKey);
+        const displayName = typeKey.charAt(0).toUpperCase() + typeKey.slice(1) + "'s Collection";
+        const subtitleText = typeKey === "men" 
+          ? "Elevate your daily wardrobe with high comfort wear" 
+          : typeKey === "kids" 
+            ? "Fun, comfortable, and durable styles for children"
+            : `Discover our premium ${typeKey} clothing collection`;
+        const shopLink = `/products?category=${groupedCategories[typeKey][0]?.slug || ''}`;
+        const emoji = typeKey === "men" ? "👔" : typeKey === "kids" ? "👧" : typeKey === "women" ? "👗" : "🛍️";
+        return (
+          <Container key={typeKey} className="mb-5 animate__animated animate__fadeIn">
+            <div className="d-flex align-items-center justify-content-between mb-4">
+              <div>
+                <h3 className="fw-bold mb-1 text-dark fs-4 fs-md-3">{displayName}</h3>
+                <p className="text-muted small">{subtitleText}</p>
+              </div>
+              <Button as={Link} to={shopLink} variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1 flex-shrink-0">
+                <span>Shop {typeKey.charAt(0).toUpperCase() + typeKey.slice(1)}&apos;s</span> <FaChevronRight size={10} />
+              </Button>
             </div>
-          )}
-        </Row>
-      </Container>
-
-      {/* 👧 KIDS' COLLECTION SECTION */}
-      <Container className="mb-5">
-        <div className="d-flex align-items-center justify-content-between mb-4">
-          <div>
-            <h3 className="fw-bold mb-1 text-dark fs-4 fs-md-3">Kids' Collection</h3>
-            <p className="text-muted small">Fun, comfortable, and durable styles for children</p>
-          </div>
-          <Button as={Link} to="/products?category=kids-shirts" variant="link" className="text-decoration-none fw-bold small text-primary d-flex align-items-center gap-1 flex-shrink-0">
-            <span>Shop Kids'</span> <FaChevronRight size={10} />
-          </Button>
-        </div>
-        <Row className="px-1">
-          {kidsCollection.length > 0 ? (
-            kidsCollection.map((p) => <ProductCard key={p._id} product={p} />)
-          ) : (
-            <div className="text-center py-5 text-muted bg-white rounded-4 border w-100 shadow-sm d-flex flex-column align-items-center justify-content-center">
-              <span style={{ fontSize: "1.5rem" }}>👧</span>
-              <h6 className="fw-bold mt-2">No Kids' Products Loaded</h6>
-              <p className="small text-muted mb-0">Use the admin panel to add products with a Kids' category.</p>
-            </div>
-          )}
-        </Row>
-      </Container>
+            <Row className="px-1">
+              {typeProducts.length > 0 ? (
+                typeProducts.map((p) => <ProductCard key={p._id} product={p} />)
+              ) : (
+                <div className="text-center py-5 text-muted bg-white rounded-4 border w-100 shadow-sm d-flex flex-column align-items-center justify-content-center">
+                  <span style={{ fontSize: "1.5rem" }}>{emoji}</span>
+                  <h6 className="fw-bold mt-2">No Products in {displayName}</h6>
+                  <p className="small text-muted mb-0">Use the admin panel to add products under this category.</p>
+                </div>
+              )}
+            </Row>
+          </Container>
+        );
+      })}
 
       {/* 🧺 LAUNDRY SERVICE SECTION */}
       <section id="laundry-section" className="py-5 bg-white border-top border-bottom mb-5">
