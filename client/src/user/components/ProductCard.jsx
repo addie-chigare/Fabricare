@@ -143,14 +143,14 @@ const ProductCard = ({ product }) => {
 
         {/* Product Image Box */}
         <div
-          className="position-relative overflow-hidden d-flex align-items-center justify-content-center bg-light mobile-product-img-box"
-          style={{ height: "200px" }}
+          className="position-relative overflow-hidden d-flex align-items-center justify-content-center bg-light mobile-product-img-box w-100"
+          style={{ aspectRatio: "1 / 1" }}
         >
           <Card.Img
             variant="top"
             src={product.image}
-            className="w-100 h-100 p-3 image-zoom"
-            style={{ objectFit: "contain", transition: "var(--transition)" }}
+            className="w-100 h-100 p-2 image-zoom"
+            style={{ objectFit: "cover", transition: "var(--transition)" }}
           />
 
           {/* Wishlist Toggle Heart Button */}
