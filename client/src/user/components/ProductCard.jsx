@@ -1,15 +1,18 @@
-import { Card, Badge, Alert, Button } from "react-bootstrap";
+import { Card, Badge, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { FaStar, FaHeart, FaRegHeart, FaShoppingCart, FaCheck, FaBolt } from "react-icons/fa";
+import { FaStar, FaHeart, FaRegHeart, FaShoppingCart, FaBolt } from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useCart();
-  const [added, setAdded] = useState(false);
+  const { addToCart, cart, removeFromCart, updateQuantity } = useCart();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const navigate = useNavigate();
+
+  const cartItem = cart.find((item) => item.product && item.product._id === product._id);
+  const isInCart = !!cartItem;
+  const currentQuantity = cartItem ? cartItem.quantity : 0;
 
   // Load initial wishlist state
   useEffect(() => {
@@ -40,10 +43,26 @@ const ProductCard = ({ product }) => {
     }
 
     addToCart(product);
-    setAdded(true);
-    setTimeout(() => {
-      setAdded(false);
-    }, 2000);
+  };
+
+  const handleIncreaseQty = async (e) => {
+    e.stopPropagation();
+    if (!cartItem) return;
+    if (currentQuantity >= product.stock) {
+      alert(`Only ${product.stock} items left in stock`);
+      return;
+    }
+    await updateQuantity(cartItem._id, currentQuantity + 1);
+  };
+
+  const handleDecreaseQty = async (e) => {
+    e.stopPropagation();
+    if (!cartItem) return;
+    if (currentQuantity === 1) {
+      await removeFromCart(cartItem._id);
+    } else {
+      await updateQuantity(cartItem._id, currentQuantity - 1);
+    }
   };
 
   const handleBuyNow = (e) => {
@@ -120,15 +139,7 @@ const ProductCard = ({ product }) => {
           transition: "var(--transition)",
         }}
       >
-        {added && (
-          <Alert
-            variant="success"
-            className="position-absolute top-0 start-50 translate-middle-x z-3 shadow py-1 px-3 text-center small"
-            style={{ borderRadius: "2rem", width: "90%", fontSize: "0.75rem", marginTop: "10px" }}
-          >
-            ✨ Added to cart
-          </Alert>
-        )}
+
 
         {/* Product Image Box */}
         <div
@@ -229,23 +240,43 @@ const ProductCard = ({ product }) => {
 
           {/* Action Buttons */}
           <div className="d-flex gap-2 mt-3">
-            <Button
-              variant={added ? "success" : "outline-primary"}
-              className="flex-grow-1 py-1.5 px-2 d-flex align-items-center justify-content-center gap-1 fw-bold text-nowrap"
-              style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px" }}
-              onClick={handleAddToCart}
-              disabled={product.stock === 0}
-            >
-              {added ? (
-                <>
-                  <FaCheck size={11} /> <span>Added</span>
-                </>
-              ) : (
-                <>
-                  <FaShoppingCart size={11} /> <span>Add</span>
-                </>
-              )}
-            </Button>
+            {isInCart ? (
+              <div 
+                className="flex-grow-1 d-flex align-items-center justify-content-between border border-primary rounded-3 bg-light"
+                style={{ minHeight: "38px", padding: "0 8px" }}
+                onClick={(e) => e.stopPropagation()} // Prevent card navigation
+              >
+                <button
+                  type="button"
+                  className="btn btn-sm border-0 p-1 text-primary fw-bold"
+                  onClick={handleDecreaseQty}
+                  style={{ fontSize: "1rem", outline: "none", boxShadow: "none" }}
+                >
+                  −
+                </button>
+                <span className="fw-bold text-primary" style={{ fontSize: "0.85rem" }}>
+                  {currentQuantity}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-sm border-0 p-1 text-primary fw-bold"
+                  onClick={handleIncreaseQty}
+                  style={{ fontSize: "1rem", outline: "none", boxShadow: "none" }}
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <Button
+                variant="outline-primary"
+                className="flex-grow-1 py-1.5 px-2 d-flex align-items-center justify-content-center gap-1 fw-bold text-nowrap"
+                style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px" }}
+                onClick={handleAddToCart}
+                disabled={product.stock === 0}
+              >
+                <FaShoppingCart size={11} /> <span>Add</span>
+              </Button>
+            )}
             
             <Button
               variant="primary"
