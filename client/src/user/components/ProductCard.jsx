@@ -150,7 +150,7 @@ const ProductCard = ({ product }) => {
             variant="top"
             src={product.image}
             className="w-100 h-100 p-2 image-zoom"
-            style={{ objectFit: "cover", transition: "var(--transition)" }}
+            style={{ objectFit: "contain", transition: "var(--transition)" }}
           />
 
           {/* Wishlist Toggle Heart Button */}
