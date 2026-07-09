@@ -390,15 +390,17 @@ const Orders = () => {
                       </Button>
                     )}
 
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="w-100 mt-2 fw-bold py-2"
-                      onClick={() => generateProductInvoice(order, settings)}
-                      style={{ borderRadius: "10px" }}
-                    >
-                      Print Invoice
-                    </Button>
+                    {order.status === "Delivered" && (
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        className="w-100 mt-2 fw-bold py-2"
+                        onClick={() => generateProductInvoice(order, settings)}
+                        style={{ borderRadius: "10px" }}
+                      >
+                        Print Invoice
+                      </Button>
+                    )}
                   </div>
                 </Col>
               </Row>

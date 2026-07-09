@@ -134,14 +134,16 @@ const LaundryOrders = () => {
                 <button className="action-btn view-details">
                   View Details
                 </button>
-                <button 
-                  type="button"
-                  className="action-btn view-details" 
-                  onClick={() => generateLaundryInvoice(order, settings)}
-                  style={{ backgroundColor: 'var(--primary)', color: '#fff', border: '1px solid var(--primary)' }}
-                >
-                  Print Invoice
-                </button>
+                {order.status.toLowerCase() === "delivered" && (
+                  <button 
+                    type="button"
+                    className="action-btn view-details" 
+                    onClick={() => generateLaundryInvoice(order, settings)}
+                    style={{ backgroundColor: 'var(--primary)', color: '#fff', border: '1px solid var(--primary)' }}
+                  >
+                    Print Invoice
+                  </button>
+                )}
                 {order.status === 'pending' && (
                   <button className="action-btn cancel-order">
                     Cancel Order
