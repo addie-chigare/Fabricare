@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaLock, FaUser, FaArrowLeft } from "react-icons/fa";
+import { FaLock, FaUser } from "react-icons/fa";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -11,13 +11,13 @@ const AdminLogin = () => {
   const [focused, setFocused] = useState(null);
 
   useEffect(() => {
-    const id = "fabricare-admin-fonts";
+    const id = "fabricare-admin-fonts-v2";
     if (!document.getElementById(id)) {
       const link = document.createElement("link");
       link.id = id;
       link.rel = "stylesheet";
       link.href =
-        "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap";
+        "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap";
       document.head.appendChild(link);
     }
   }, []);
@@ -58,60 +58,43 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="fc-login">
+    <div className="fc2-page">
       <style>{css}</style>
 
-      {/* Brand panel */}
-      <div className="fc-brand">
-        <svg className="fc-weave" viewBox="0 0 400 800" preserveAspectRatio="none">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <line key={`h${i}`} x1="0" y1={i * 100 + 40} x2="400" y2={i * 100 + 40} className="fc-thread fc-thread--h" />
-          ))}
-          {Array.from({ length: 5 }).map((_, i) => (
-            <line key={`v${i}`} x1={i * 100 + 40} y1="0" x2={i * 100 + 40} y2="800" className="fc-thread fc-thread--v" />
-          ))}
-          <line x1="0" y1="0" x2="0" y2="800" className="fc-shuttle" />
-        </svg>
+      <div className="fc2-card">
+        {/* registration marks — corner notches like a cutting pattern */}
+        <span className="fc2-notch fc2-notch--tl" />
+        <span className="fc2-notch fc2-notch--tr" />
+        <span className="fc2-notch fc2-notch--bl" />
+        <span className="fc2-notch fc2-notch--br" />
 
-        <div className="fc-brand-content">
-          <div className="fc-mark" aria-hidden="true">
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-              <path d="M2 15C2 8 8 2 15 2s13 6 13 13-6 13-13 13S2 22 2 15Z" stroke="currentColor" strokeWidth="1.6" />
-              <path d="M9 15h12M15 9v12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </div>
-          <p className="fc-eyebrow">ADMIN&nbsp;ACCESS</p>
-          <h1 className="fc-wordmark">Fabricare</h1>
-          <p className="fc-tagline">Operations control for every stage of the garment lifecycle — intake, care, and delivery, woven into one system.</p>
-
-          <div className="fc-stat-row">
-            <div>
-              <span className="fc-stat-num">128k</span>
-              <span className="fc-stat-label">Orders tracked</span>
-            </div>
-            <div>
-              <span className="fc-stat-num">99.98%</span>
-              <span className="fc-stat-label">Uptime</span>
-            </div>
-          </div>
+        <div className="fc2-ruler">
+          {Array.from({ length: 24 }).map((_, i) => (
+            <span key={i} className={i % 4 === 0 ? "fc2-tick fc2-tick--major" : "fc2-tick"} />
+          ))}
         </div>
-      </div>
 
-      {/* Form panel */}
-      <div className="fc-form-panel">
-        <div className="fc-form-wrap">
-          <a href="/" className="fc-back">
-            <FaArrowLeft size={11} /> Back to storefront
-          </a>
+        <div className="fc2-body">
+          <div className="fc2-head">
+            <div className="fc2-badge">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="8.5" stroke="currentColor" strokeWidth="1.4" />
+                <path d="M10 4v3M10 13v3M4 10h3M13 10h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div>
+              <p className="fc2-eyebrow">PATTERN&nbsp;NO. FC—ADM—01</p>
+              <h1 className="fc2-title">Fabricare</h1>
+            </div>
+          </div>
 
-          <h2 className="fc-heading">Sign in</h2>
-          <p className="fc-subheading">Enter your administrator credentials to continue.</p>
+          <p className="fc2-sub">Admin console — sign in to adjust cut, care, and delivery specs.</p>
 
-          {error && <div className="fc-alert" role="alert">{error}</div>}
+          {error && <div className="fc2-alert" role="alert">{error}</div>}
 
           <form onSubmit={handleSubmit} noValidate>
-            <div className={`fc-field ${focused === "username" ? "is-focused" : ""} ${formData.username ? "has-value" : ""}`}>
-              <FaUser className="fc-field-icon" size={13} />
+            <div className={`fc2-field ${focused === "username" ? "is-focused" : ""}`}>
+              <label htmlFor="username"><FaUser size={10} /> Username or email</label>
               <input
                 type="text"
                 name="username"
@@ -123,12 +106,12 @@ const AdminLogin = () => {
                 onBlur={() => setFocused(null)}
                 required
                 disabled={loading}
+                placeholder="admin@fabricare.com"
               />
-              <label htmlFor="username">Username or email</label>
             </div>
 
-            <div className={`fc-field ${focused === "password" ? "is-focused" : ""} ${formData.password ? "has-value" : ""}`}>
-              <FaLock className="fc-field-icon" size={13} />
+            <div className={`fc2-field ${focused === "password" ? "is-focused" : ""}`}>
+              <label htmlFor="password"><FaLock size={10} /> Password</label>
               <input
                 type="password"
                 name="password"
@@ -140,16 +123,20 @@ const AdminLogin = () => {
                 onBlur={() => setFocused(null)}
                 required
                 disabled={loading}
+                placeholder="••••••••"
               />
-              <label htmlFor="password">Password</label>
             </div>
 
-            <button type="submit" className="fc-submit" disabled={loading}>
-              {loading ? <span className="fc-spinner" aria-hidden="true" /> : "Access dashboard"}
+            <button type="submit" className="fc2-submit" disabled={loading}>
+              {loading ? <span className="fc2-spinner" aria-hidden="true" /> : "Access dashboard"}
+              <span className="fc2-submit-mark">×</span>
             </button>
           </form>
 
-          <p className="fc-footnote">Protected area. Access attempts are logged.</p>
+          <div className="fc2-foot">
+            <a href="/" className="fc2-back">← Back to storefront</a>
+            <span className="fc2-scale">SCALE 1:1</span>
+          </div>
         </div>
       </div>
     </div>
@@ -157,183 +144,167 @@ const AdminLogin = () => {
 };
 
 const css = `
-  .fc-login {
+  .fc2-page {
     min-height: 100vh;
     width: 100%;
     display: flex;
-    font-family: 'Inter', sans-serif;
-    background: #f4f4f2;
-  }
-
-  /* ---------- Brand panel ---------- */
-  .fc-brand {
-    position: relative;
-    flex: 0 0 44%;
-    background: #10131c;
-    overflow: hidden;
-    display: flex;
     align-items: center;
-    padding: 4rem 3.5rem;
-  }
-  .fc-weave { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.5; }
-  .fc-thread { stroke: #2a3142; stroke-width: 1; }
-  .fc-thread--v { stroke: #232a3a; }
-  .fc-shuttle {
-    stroke: #14b8a6;
-    stroke-width: 2;
-    filter: drop-shadow(0 0 6px rgba(20, 184, 166, 0.7));
-    animation: fc-shuttle-move 7s linear infinite;
-  }
-  @keyframes fc-shuttle-move {
-    0% { transform: translateX(0); opacity: 0; }
-    5% { opacity: 1; }
-    95% { opacity: 1; }
-    100% { transform: translateX(400px); opacity: 0; }
+    justify-content: center;
+    padding: 2rem;
+    background:
+      linear-gradient(#dfe2e8 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, #dfe2e8 1px, transparent 1px) 0 0 / 24px 24px,
+      #f2f3f5;
+    font-family: 'IBM Plex Sans', sans-serif;
   }
 
-  .fc-brand-content { position: relative; z-index: 1; color: #e9ebf1; max-width: 360px; }
-  .fc-mark {
-    width: 44px; height: 44px;
+  .fc2-card {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: #fcfcfb;
+    border: 1.4px solid #232733;
+    box-shadow: 6px 6px 0 rgba(35,39,51,0.08);
+  }
+
+  .fc2-notch {
+    position: absolute;
+    width: 9px; height: 9px;
+    border: 1.4px solid #232733;
+    background: #f2f3f5;
+    transform: rotate(45deg);
+  }
+  .fc2-notch--tl { top: -5.5px; left: -5.5px; }
+  .fc2-notch--tr { top: -5.5px; right: -5.5px; }
+  .fc2-notch--bl { bottom: -5.5px; left: -5.5px; }
+  .fc2-notch--br { bottom: -5.5px; right: -5.5px; }
+
+  .fc2-ruler {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 1.5rem;
+    height: 16px;
+    border-bottom: 1px solid #d8dae0;
+  }
+  .fc2-tick { width: 1px; height: 5px; background: #c3c6cd; }
+  .fc2-tick--major { height: 9px; background: #8a8f9c; }
+
+  .fc2-body { padding: 2rem 2rem 1.5rem; }
+
+  .fc2-head { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.1rem; }
+  .fc2-badge {
+    width: 38px; height: 38px;
+    flex: 0 0 38px;
+    border: 1.4px solid #232733;
+    border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    color: #14b8a6;
-    border: 1px solid rgba(20,184,166,0.35);
-    border-radius: 12px;
-    margin-bottom: 1.75rem;
+    color: #e23744;
   }
-  .fc-eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
-    color: #eab308;
-    margin: 0 0 0.65rem;
+  .fc2-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: #8a8f9c;
+    margin: 0 0 0.15rem;
   }
-  .fc-wordmark {
-    font-family: 'Space Grotesk', sans-serif;
+  .fc2-title {
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 600;
-    font-size: 2.6rem;
-    line-height: 1.05;
-    margin: 0 0 1rem;
+    font-size: 1.4rem;
+    color: #232733;
+    margin: 0;
     letter-spacing: -0.01em;
   }
-  .fc-tagline {
-    font-size: 0.94rem;
-    line-height: 1.6;
-    color: #9aa3b5;
-    margin: 0 0 2.75rem;
-  }
-  .fc-stat-row { display: flex; gap: 2.5rem; padding-top: 1.75rem; border-top: 1px solid rgba(255,255,255,0.08); }
-  .fc-stat-row > div { display: flex; flex-direction: column; gap: 0.2rem; }
-  .fc-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: #f1f0ec; }
-  .fc-stat-label { font-size: 0.72rem; color: #6b7386; }
+  .fc2-sub { font-size: 0.84rem; color: #5a5f6b; line-height: 1.5; margin: 0 0 1.5rem; }
 
-  /* ---------- Form panel ---------- */
-  .fc-form-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2.5rem; }
-  .fc-form-wrap { width: 100%; max-width: 360px; }
-
-  .fc-back {
-    display: inline-flex; align-items: center; gap: 0.45rem;
-    font-size: 0.78rem; color: #6b7280; text-decoration: none;
-    margin-bottom: 2.5rem;
-    transition: color 0.15s ease;
-  }
-  .fc-back:hover { color: #14b8a6; }
-
-  .fc-heading {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 1.6rem;
-    color: #12151f;
-    margin: 0 0 0.4rem;
-  }
-  .fc-subheading { font-size: 0.88rem; color: #6b7280; margin: 0 0 1.75rem; }
-
-  .fc-alert {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #b91c1c;
-    font-size: 0.82rem;
-    padding: 0.7rem 0.9rem;
-    border-radius: 0.6rem;
-    margin-bottom: 1.25rem;
+  .fc2-alert {
+    background: #fdecec;
+    border: 1px solid #e23744;
+    color: #a4222b;
+    font-size: 0.8rem;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1.1rem;
   }
 
-  .fc-field {
-    position: relative;
-    margin-bottom: 1.35rem;
-    border-bottom: 1.5px solid #d8d8d4;
-    transition: border-color 0.15s ease;
+  .fc2-field { margin-bottom: 1.1rem; }
+  .fc2-field label {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: #5a5f6b;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
   }
-  .fc-field.is-focused { border-color: #14b8a6; }
-  .fc-field-icon {
-    position: absolute; left: 0; top: 1.15rem;
-    color: #9aa0a6;
-    transition: color 0.15s ease;
-  }
-  .fc-field.is-focused .fc-field-icon { color: #14b8a6; }
-  .fc-field input {
+  .fc2-field.is-focused label { color: #e23744; }
+  .fc2-field input {
     width: 100%;
-    border: none;
+    box-sizing: border-box;
+    border: 1.4px solid #c3c6cd;
+    background: #fff;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.9rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: #232733;
     outline: none;
-    background: transparent;
-    padding: 1.35rem 0 0.55rem 1.6rem;
-    font-size: 0.95rem;
-    color: #12151f;
-    font-family: 'Inter', sans-serif;
+    transition: border-color 0.12s ease;
   }
-  .fc-field label {
-    position: absolute;
-    left: 1.6rem;
-    top: 1.15rem;
-    font-size: 0.95rem;
-    color: #9aa0a6;
-    pointer-events: none;
-    transition: all 0.15s ease;
-  }
-  .fc-field.is-focused label,
-  .fc-field.has-value label {
-    top: 0;
-    font-size: 0.72rem;
-    color: #14b8a6;
-    letter-spacing: 0.02em;
-  }
+  .fc2-field input::placeholder { color: #b7bac2; }
+  .fc2-field.is-focused input { border-color: #e23744; }
 
-  .fc-submit {
+  .fc2-submit {
     width: 100%;
-    margin-top: 0.75rem;
-    padding: 0.85rem;
-    border: none;
-    border-radius: 0.7rem;
-    background: #12151f;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 0.92rem;
+    margin-top: 0.4rem;
+    padding: 0.75rem;
+    border: 1.4px solid #232733;
+    background: #232733;
+    color: #fcfcfb;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
     cursor: pointer;
+    position: relative;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s ease, transform 0.1s ease;
+    transition: background 0.12s ease;
   }
-  .fc-submit:hover:not(:disabled) { background: #14b8a6; }
-  .fc-submit:active:not(:disabled) { transform: scale(0.99); }
-  .fc-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+  .fc2-submit:hover:not(:disabled) { background: #e23744; border-color: #e23744; }
+  .fc2-submit:disabled { opacity: 0.65; cursor: not-allowed; }
+  .fc2-submit-mark { position: absolute; right: 0.9rem; font-size: 0.9rem; opacity: 0.6; }
 
-  .fc-spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.35);
+  .fc2-spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
     border-top-color: #fff;
     border-radius: 50%;
-    animation: fc-spin 0.7s linear infinite;
+    animation: fc2-spin 0.7s linear infinite;
   }
-  @keyframes fc-spin { to { transform: rotate(360deg); } }
+  @keyframes fc2-spin { to { transform: rotate(360deg); } }
 
-  .fc-footnote { margin-top: 1.75rem; font-size: 0.72rem; color: #9aa0a6; text-align: center; }
+  .fc2-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #d8dae0;
+  }
+  .fc2-back { font-size: 0.76rem; color: #5a5f6b; text-decoration: none; }
+  .fc2-back:hover { color: #e23744; }
+  .fc2-scale {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    color: #b7bac2;
+    letter-spacing: 0.04em;
+  }
 
-  @media (max-width: 860px) {
-    .fc-brand { display: none; }
-    .fc-form-panel { padding: 1.5rem; }
+  @media (max-width: 460px) {
+    .fc2-page { padding: 1rem; }
+    .fc2-body { padding: 1.5rem 1.25rem 1.25rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .fc-shuttle { animation: none; opacity: 0.6; }
+    .fc2-spinner { animation: none; }
   }
 `;
 
