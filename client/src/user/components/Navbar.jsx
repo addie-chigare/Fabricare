@@ -43,6 +43,8 @@ const FONT_SANS = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
 const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "Laundry", to: "/laundry/services" },
+  { label: "About Us", to: "/about" },
+  { label: "Contact Us", to: "/contact" },
 ];
 
 const AppNavbar = () => {
@@ -892,9 +894,22 @@ const AppNavbar = () => {
           </button>
         </div>
 
-        <nav style={{ display: "flex", flexDirection: "column", overflowY: "auto", flex: 1, padding: !token ? "24px 0" : "0" }}>
+        <nav style={{ display: "flex", flexDirection: "column", overflowY: "auto", flex: 1, padding: "12px 0" }}>
+          <Link to="/" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
+            Home
+          </Link>
+          <Link to="/laundry/services" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
+            <FaTshirt size={13} /> Laundry Service
+          </Link>
+          <Link to="/about" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
+            About Us
+          </Link>
+          <Link to="/contact" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
+            Contact Us
+          </Link>
+
           {!token ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: "0 18px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: "18px" }}>
               <Link to="/login" style={{
                 textAlign: "center",
                 padding: 12,
@@ -946,13 +961,6 @@ const AppNavbar = () => {
             </div>
           ) : (
             <>
-              <Link to="/" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
-                Home
-              </Link>
-              <Link to="/laundry/services" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
-                <FaTshirt size={13} /> Laundry Service
-              </Link>
-
               <button type="button" style={drawerLinkStyle} onClick={() => goToProfileTab("details")}>
                 <FaUser size={13} /> My Profile
               </button>

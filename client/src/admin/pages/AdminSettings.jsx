@@ -11,6 +11,12 @@ const AdminSettings = () => {
   const [laundryWashFoldPrice, setLaundryWashFoldPrice] = useState(49);
   const [laundryDryCleanPrice, setLaundryDryCleanPrice] = useState(99);
   const [laundrySteamIronPrice, setLaundrySteamIronPrice] = useState(19);
+  const [aboutTitle, setAboutTitle] = useState("");
+  const [aboutDescription, setAboutDescription] = useState("");
+  const [aboutMission, setAboutMission] = useState("");
+  const [aboutVision, setAboutVision] = useState("");
+  const [aboutImageUrl, setAboutImageUrl] = useState("");
+  const [contactMapEmbed, setContactMapEmbed] = useState("");
   const [logo, setLogo] = useState(null);
   const [previewLogo, setPreviewLogo] = useState("");
   const [loading, setLoading] = useState(true);
@@ -24,7 +30,11 @@ const AdminSettings = () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:8000/api/v1/settings");
-      const { brandName, footerAbout, footerEmail, footerPhone, footerAddress, logo, laundryWashFoldPrice, laundryDryCleanPrice, laundrySteamIronPrice } = res.data;
+      const { 
+        brandName, footerAbout, footerEmail, footerPhone, footerAddress, logo, 
+        laundryWashFoldPrice, laundryDryCleanPrice, laundrySteamIronPrice,
+        aboutTitle, aboutDescription, aboutMission, aboutVision, aboutImageUrl, contactMapEmbed 
+      } = res.data;
       setBrandName(brandName || "");
       setFooterAbout(footerAbout || "");
       setFooterEmail(footerEmail || "");
@@ -34,6 +44,12 @@ const AdminSettings = () => {
       setLaundryWashFoldPrice(laundryWashFoldPrice !== undefined ? laundryWashFoldPrice : 49);
       setLaundryDryCleanPrice(laundryDryCleanPrice !== undefined ? laundryDryCleanPrice : 99);
       setLaundrySteamIronPrice(laundrySteamIronPrice !== undefined ? laundrySteamIronPrice : 19);
+      setAboutTitle(aboutTitle || "");
+      setAboutDescription(aboutDescription || "");
+      setAboutMission(aboutMission || "");
+      setAboutVision(aboutVision || "");
+      setAboutImageUrl(aboutImageUrl || "");
+      setContactMapEmbed(contactMapEmbed || "");
     } catch (err) {
       console.error("Failed to load settings:", err);
       setError("Failed to load settings from server.");
@@ -70,6 +86,12 @@ const AdminSettings = () => {
       formData.append("laundryWashFoldPrice", laundryWashFoldPrice);
       formData.append("laundryDryCleanPrice", laundryDryCleanPrice);
       formData.append("laundrySteamIronPrice", laundrySteamIronPrice);
+      formData.append("aboutTitle", aboutTitle);
+      formData.append("aboutDescription", aboutDescription);
+      formData.append("aboutMission", aboutMission);
+      formData.append("aboutVision", aboutVision);
+      formData.append("aboutImageUrl", aboutImageUrl);
+      formData.append("contactMapEmbed", contactMapEmbed);
       if (logo) {
         formData.append("logo", logo);
       }
@@ -97,6 +119,12 @@ const AdminSettings = () => {
       setLaundryWashFoldPrice(updated.laundryWashFoldPrice !== undefined ? updated.laundryWashFoldPrice : 49);
       setLaundryDryCleanPrice(updated.laundryDryCleanPrice !== undefined ? updated.laundryDryCleanPrice : 99);
       setLaundrySteamIronPrice(updated.laundrySteamIronPrice !== undefined ? updated.laundrySteamIronPrice : 19);
+      setAboutTitle(updated.aboutTitle || "");
+      setAboutDescription(updated.aboutDescription || "");
+      setAboutMission(updated.aboutMission || "");
+      setAboutVision(updated.aboutVision || "");
+      setAboutImageUrl(updated.aboutImageUrl || "");
+      setContactMapEmbed(updated.contactMapEmbed || "");
       
       // Emit a global custom event so the Navbar and Footer fetch the new settings immediately!
       window.dispatchEvent(new Event("settings-updated"));
@@ -199,7 +227,7 @@ const AdminSettings = () => {
             </div>
 
             {/* LAUNDRY PRICING CARD */}
-            <div className="admin-card">
+            <div className="admin-card mb-4">
               <h5 className="fw-bold mb-4">Laundry Service Pricing (₹)</h5>
               <div className="row g-3">
                 <div className="col-md-4">
@@ -244,6 +272,87 @@ const AdminSettings = () => {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* ABOUT US & CONTACT PAGE CUSTOMIZATION */}
+            <div className="admin-card">
+              <h5 className="fw-bold mb-4">About Us & Contact Us Content</h5>
+              <div className="mb-3">
+                <label className="form-label small fw-semibold text-muted text-uppercase">About Us Page Title</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={aboutTitle}
+                  onChange={(e) => setAboutTitle(e.target.value)}
+                  placeholder="e.g. About Our Brand"
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label small fw-semibold text-muted text-uppercase">About Us Story / Description</label>
+                <textarea
+                  className="form-control"
+                  rows="4"
+                  value={aboutDescription}
+                  onChange={(e) => setAboutDescription(e.target.value)}
+                  placeholder="Write a detailed description about your company, history, or values..."
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label small fw-semibold text-muted text-uppercase">About Us Image URL</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={aboutImageUrl}
+                  onChange={(e) => setAboutImageUrl(e.target.value)}
+                  placeholder="e.g. https://images.unsplash.com/photo..."
+                  required
+                />
+                <small className="text-muted smaller">A direct image URL representing the brand on the About page</small>
+              </div>
+
+              <div className="row g-3 mb-3">
+                <div className="col-md-6">
+                  <label className="form-label small fw-semibold text-muted text-uppercase">Our Mission</label>
+                  <textarea
+                    className="form-control"
+                    rows="2"
+                    value={aboutMission}
+                    onChange={(e) => setAboutMission(e.target.value)}
+                    placeholder="Company mission statement..."
+                    required
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label small fw-semibold text-muted text-uppercase">Our Vision</label>
+                  <textarea
+                    className="form-control"
+                    rows="2"
+                    value={aboutVision}
+                    onChange={(e) => setAboutVision(e.target.value)}
+                    placeholder="Company vision statement..."
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="form-label small fw-semibold text-muted text-uppercase">Google Maps Embed URL</label>
+                <textarea
+                  className="form-control"
+                  rows="2"
+                  value={contactMapEmbed}
+                  onChange={(e) => setContactMapEmbed(e.target.value)}
+                  placeholder="https://www.google.com/maps/embed?pb=..."
+                  required
+                />
+                <small className="text-muted smaller">
+                  Go to Google Maps, click Share, select Embed a map, and copy the URL inside the src="..." attribute.
+                </small>
               </div>
             </div>
           </div>

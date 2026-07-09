@@ -22,7 +22,13 @@ export const updateSettings = async (req, res) => {
       footerAddress,
       laundryWashFoldPrice,
       laundryDryCleanPrice,
-      laundrySteamIronPrice
+      laundrySteamIronPrice,
+      aboutTitle,
+      aboutDescription,
+      aboutMission,
+      aboutVision,
+      aboutImageUrl,
+      contactMapEmbed
     } = req.body;
     let settings = await Settings.findOne();
     if (!settings) {
@@ -34,6 +40,12 @@ export const updateSettings = async (req, res) => {
     if (footerEmail !== undefined) settings.footerEmail = footerEmail;
     if (footerPhone !== undefined) settings.footerPhone = footerPhone;
     if (footerAddress !== undefined) settings.footerAddress = footerAddress;
+    if (aboutTitle !== undefined) settings.aboutTitle = aboutTitle;
+    if (aboutDescription !== undefined) settings.aboutDescription = aboutDescription;
+    if (aboutMission !== undefined) settings.aboutMission = aboutMission;
+    if (aboutVision !== undefined) settings.aboutVision = aboutVision;
+    if (aboutImageUrl !== undefined) settings.aboutImageUrl = aboutImageUrl;
+    if (contactMapEmbed !== undefined) settings.contactMapEmbed = contactMapEmbed;
     if (laundryWashFoldPrice !== undefined) settings.laundryWashFoldPrice = Number(laundryWashFoldPrice);
     if (laundryDryCleanPrice !== undefined) settings.laundryDryCleanPrice = Number(laundryDryCleanPrice);
     if (laundrySteamIronPrice !== undefined) settings.laundrySteamIronPrice = Number(laundrySteamIronPrice);

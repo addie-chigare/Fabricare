@@ -34,6 +34,8 @@ import LaundryOrders from "./user/pages/LaundryOrders";
 import LaundrySupport from "./user/pages/LaundrySupport";
 import ManageLaundry from "./admin/pages/ManageLaundry";
 import AdminLogin from "./admin/pages/AdminLogin";
+import About from "./user/pages/About";
+import Contact from "./user/pages/Contact";
 
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -94,6 +96,8 @@ function App() {
           {/* User Layout */}
           <Route path="/" element={<UserLayout />}>
             <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="contact" element={<Contact />} />
 
             <Route
               path="products"
