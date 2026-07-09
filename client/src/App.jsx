@@ -36,6 +36,7 @@ import ManageLaundry from "./admin/pages/ManageLaundry";
 import AdminLogin from "./admin/pages/AdminLogin";
 import About from "./user/pages/About";
 import Contact from "./user/pages/Contact";
+import Careers from "./user/pages/Careers";
 
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -98,6 +99,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
+            <Route path="careers" element={<Careers />} />
 
             <Route
               path="products"

@@ -907,6 +907,9 @@ const AppNavbar = () => {
           <Link to="/contact" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
             Contact Us
           </Link>
+          <Link to="/careers" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
+            Careers
+          </Link>
 
           {!token ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: "18px" }}>
