@@ -34,7 +34,9 @@ const AdminOrders = () => {
       );
       fetchOrders();
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      alert(error.response?.data?.message || "Failed to update order status.");
+      fetchOrders();
     }
   };
 

@@ -113,7 +113,8 @@ const ManageLaundry = () => {
       fetchData();
     } catch (error) {
       console.error("Error updating order status:", error);
-      setMessage({ type: "danger", text: "Failed to update order status." });
+      const errMsg = error.response?.data?.message || "Failed to update order status.";
+      setMessage({ type: "danger", text: errMsg });
     } finally {
       setSaving(false);
     }

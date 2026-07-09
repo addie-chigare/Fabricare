@@ -222,6 +222,25 @@ export const updateOrderStatus = async (req, res) => {
       });
     }
 
+    const currentStatus = order.status;
+    if (currentStatus !== status) {
+      if (currentStatus === "Delivered" || currentStatus === "Cancelled") {
+        return res.status(400).json({ message: `Cannot change status of a ${currentStatus} order.` });
+      }
+      
+      if (status === "Pending") {
+        return res.status(400).json({ message: "Cannot revert order status back to Pending." });
+      }
+
+      if (currentStatus === "Confirmed" && status !== "Shipped" && status !== "Cancelled") {
+        return res.status(400).json({ message: "Confirmed order can only transition to Shipped or Cancelled." });
+      }
+
+      if (currentStatus === "Shipped" && status !== "Delivered") {
+        return res.status(400).json({ message: "Shipped order can only transition to Delivered." });
+      }
+    }
+
     order.status = status;
 
     // 📦 shipped date

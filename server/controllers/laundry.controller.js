@@ -234,6 +234,39 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     if (status) {
+      const currentStatus = order.status.toLowerCase();
+      const targetStatus = status.toLowerCase();
+
+      if (currentStatus !== targetStatus) {
+        if (currentStatus === "delivered" || currentStatus === "cancelled") {
+          return res.status(400).json({ message: `Cannot change status of a ${currentStatus} booking.` });
+        }
+
+        if (targetStatus === "pending") {
+          return res.status(400).json({ message: "Cannot revert laundry booking status back to Pending." });
+        }
+
+        if (currentStatus === "confirmed" && targetStatus !== "picked_up" && targetStatus !== "cancelled") {
+          return res.status(400).json({ message: "Confirmed booking can only transition to Picked Up or Cancelled." });
+        }
+
+        if (currentStatus === "picked_up" && targetStatus !== "washing") {
+          return res.status(400).json({ message: "Picked up booking can only transition to Washing." });
+        }
+
+        if (currentStatus === "washing" && targetStatus !== "ironing") {
+          return res.status(400).json({ message: "Washing booking can only transition to Ironing." });
+        }
+
+        if (currentStatus === "ironing" && targetStatus !== "ready_for_delivery") {
+          return res.status(400).json({ message: "Ironing booking can only transition to Ready For Delivery." });
+        }
+
+        if (currentStatus === "ready_for_delivery" && targetStatus !== "delivered") {
+          return res.status(400).json({ message: "Ready for delivery booking can only transition to Delivered." });
+        }
+      }
+
       order.status = status;
       const desc = timelineDescription || `Order status updated to ${status.replace("_", " ")}`;
       order.timeline.push({
