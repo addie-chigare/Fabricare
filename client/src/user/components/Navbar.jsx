@@ -42,7 +42,7 @@ const FONT_SANS = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },
-  { label: "Laundry", href: "/#laundry-section" },
+  { label: "Laundry", to: "/laundry/services" },
 ];
 
 const AppNavbar = () => {
@@ -523,6 +523,7 @@ const AppNavbar = () => {
                   >
                     {({ isActive }) => (
                       <>
+                        {item.label === "Laundry" && <FaTshirt size={12} style={{ marginRight: 4 }} />}
                         {item.label}
                         <span style={underlineStyle(isHover(item.label) || isActive)} />
                       </>
@@ -948,9 +949,9 @@ const AppNavbar = () => {
               <Link to="/" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
                 Home
               </Link>
-              <a href="/#laundry-section" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
+              <Link to="/laundry/services" style={drawerLinkStyle} onClick={() => setMenuOpen(false)}>
                 <FaTshirt size={13} /> Laundry Service
-              </a>
+              </Link>
 
               <button type="button" style={drawerLinkStyle} onClick={() => goToProfileTab("details")}>
                 <FaUser size={13} /> My Profile
