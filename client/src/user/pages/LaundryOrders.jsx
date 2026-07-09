@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { getLaundryOrders } from '../../services/api';
+import { generateLaundryInvoice } from '../../services/invoiceHelper';
+import axios from 'axios';
 import './Laundry.css';
 
 const LaundryOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState(null);
 
   useEffect(() => {
     fetchOrders();
+    const fetchSettings = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/api/v1/settings");
+        setSettings(res.data);
+      } catch (err) {
+        console.error("Failed to load settings in LaundryOrders:", err);
+      }
+    };
+    fetchSettings();
   }, []);
 
   const fetchOrders = async () => {
@@ -121,6 +133,14 @@ const LaundryOrders = () => {
               <div className="order-actions">
                 <button className="action-btn view-details">
                   View Details
+                </button>
+                <button 
+                  type="button"
+                  className="action-btn view-details" 
+                  onClick={() => generateLaundryInvoice(order, settings)}
+                  style={{ backgroundColor: 'var(--primary)', color: '#fff', border: '1px solid var(--primary)' }}
+                >
+                  Print Invoice
                 </button>
                 {order.status === 'pending' && (
                   <button className="action-btn cancel-order">

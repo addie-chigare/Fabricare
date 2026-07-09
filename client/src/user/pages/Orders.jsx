@@ -3,6 +3,7 @@ import { FaCreditCard } from "react-icons/fa";
 import { Pagination } from "react-bootstrap";
 import axios from "axios";
 import { Container, Card, Row, Col, Badge, Button } from "react-bootstrap";
+import { generateProductInvoice } from "../../services/invoiceHelper";
 import {
   FaBox,
   FaMapMarkerAlt,
@@ -15,6 +16,7 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [settings, setSettings] = useState(null);
   const ordersPerPage = 10;
   const token = localStorage.getItem("token");
 
@@ -37,6 +39,15 @@ const Orders = () => {
 
   useEffect(() => {
     loadOrders();
+    const fetchSettings = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/api/v1/settings");
+        setSettings(res.data);
+      } catch (err) {
+        console.error("Failed to load settings in Orders:", err);
+      }
+    };
+    fetchSettings();
   }, [loadOrders]);
 
   const cancelOrder = async (id) => {
@@ -378,6 +389,16 @@ const Orders = () => {
                         Cancel Order
                       </Button>
                     )}
+
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="w-100 mt-2 fw-bold py-2"
+                      onClick={() => generateProductInvoice(order, settings)}
+                      style={{ borderRadius: "10px" }}
+                    >
+                      Print Invoice
+                    </Button>
                   </div>
                 </Col>
               </Row>
