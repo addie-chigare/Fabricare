@@ -7,7 +7,7 @@ const AdminRoute = ({ children }) => {
 
   // ❌ Not logged in
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   // ❌ Not admin

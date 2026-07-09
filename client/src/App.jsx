@@ -31,6 +31,7 @@ import BookLaundry from "./user/pages/BookLaundry";
 import LaundryOrders from "./user/pages/LaundryOrders";
 import LaundrySupport from "./user/pages/LaundrySupport";
 import ManageLaundry from "./admin/pages/ManageLaundry";
+import AdminLogin from "./admin/pages/AdminLogin";
 
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -59,6 +60,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
 
           {/* User Layout */}
           <Route path="/" element={<UserLayout />}>
