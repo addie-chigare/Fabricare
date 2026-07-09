@@ -1,5 +1,6 @@
 import { LaundryOrder } from "../models/LaundryOrder.js";
 import { Settings } from "../models/settings.js";
+import { sendLaundryNotificationEmail } from "../utils/emailService.js";
 
 // Service map for mapping string service IDs to full service detail objects
 const serviceMap = {
@@ -141,6 +142,13 @@ export const bookPickup = async (req, res) => {
     });
 
     await order.save();
+
+    try {
+      sendLaundryNotificationEmail(req.user.email, req.user.name, order, "pending");
+    } catch (err) {
+      console.error("Failed to send laundry booked email:", err.message);
+    }
+
     res.status(201).json(formatOrder(order));
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -239,6 +247,14 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     await order.save();
+
+    try {
+      await order.populate("user", "name email");
+      sendLaundryNotificationEmail(order.user.email, order.user.name, order, status);
+    } catch (err) {
+      console.error("Failed to send laundry status update email:", err.message);
+    }
+
     res.status(200).json(formatOrder(order));
   } catch (error) {
     res.status(500).json({ message: error.message });

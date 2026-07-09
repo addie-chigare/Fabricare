@@ -3,6 +3,7 @@ import Cart from "../models/cart.model.js";
 import { Product } from "../models/product.js";
 import Address from "../models/Address.js";
 import { sendSMS } from "../utils/smsHelper.js";
+import { sendOrderNotificationEmail } from "../utils/emailService.js";
 
 export const placeOrder = async (req, res) => {
   try {
@@ -90,6 +91,13 @@ export const placeOrder = async (req, res) => {
 
     await Cart.deleteMany({ user: req.user.id });
 
+    try {
+      const populatedOrder = await Order.findById(order._id).populate("items.product");
+      sendOrderNotificationEmail(req.user.email, req.user.name, populatedOrder, order.status);
+    } catch (err) {
+      console.error("Failed to send order placed email:", err.message);
+    }
+
     res.status(201).json({
       message: "Order placed successfully",
       order,
@@ -156,6 +164,13 @@ export const cancelOrder = async (req, res) => {
     }
 
     await order.save();
+
+    try {
+      const populatedOrder = await Order.findById(order._id).populate("items.product");
+      sendOrderNotificationEmail(req.user.email, req.user.name, populatedOrder, "Cancelled");
+    } catch (err) {
+      console.error("Failed to send order cancellation email:", err.message);
+    }
 
     res.json({
       message: "Order cancelled successfully",
@@ -254,6 +269,14 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     await order.save();
+
+    try {
+      await order.populate("user", "name email");
+      await order.populate("items.product");
+      sendOrderNotificationEmail(order.user.email, order.user.name, order, status);
+    } catch (err) {
+      console.error("Failed to send order update email:", err.message);
+    }
 
     res.json({
       message: "Order status updated",
