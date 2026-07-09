@@ -3,6 +3,7 @@ import axios from "axios";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { startSession } from "../services/sessionHelper";
 
 const Login = () => {
 
@@ -36,6 +37,7 @@ const Login = () => {
       
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+      startSession();
 
       alert("Login Successful");
       loadCart();

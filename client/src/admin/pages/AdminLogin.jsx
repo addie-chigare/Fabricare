@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaLock, FaUser } from "react-icons/fa";
+import { startSession } from "../../services/sessionHelper";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ const AdminLogin = () => {
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(user));
+      startSession();
 
       navigate("/admin/dashboard");
       window.location.reload();

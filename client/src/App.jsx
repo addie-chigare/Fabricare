@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { isSessionExpired, clearSession } from "./services/sessionHelper";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -40,6 +42,32 @@ import ForgotPassword from "./auth/ForgotPassword";
 import ProtectedRoute from "./user/components/ProtectedRoute";
 import AdminRoute from "./admin/components/AdminRoute";
 
+function SessionManager() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const checkSession = () => {
+      const token = localStorage.getItem("token");
+      if (token && isSessionExpired()) {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        clearSession();
+        alert("Your login session has expired (2 hours limit). Please sign in again.");
+        if (user.role === "admin") {
+          window.location.href = "/admin/login";
+        } else {
+          window.location.href = "/login";
+        }
+      }
+    };
+
+    checkSession();
+    const interval = setInterval(checkSession, 15000); // Check session every 15s
+    return () => clearInterval(interval);
+  }, [location]);
+
+  return null;
+}
+
 function App() {
   return (
     <PayPalScriptProvider
@@ -53,6 +81,7 @@ function App() {
       }}
     >
       <Router>
+        <SessionManager />
         <ToastContainer position="top-right" autoClose={2000} />
 
         <Routes>
