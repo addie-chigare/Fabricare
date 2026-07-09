@@ -372,7 +372,7 @@ const Home = () => {
                 </div>
               </Col>
               <Col md={4} className="text-md-end">
-                <Button onClick={() => alert("Laundry booking page/module under development. Contact Support: hello@fabricare.com")} variant="success" size="lg" className="px-4 py-3 fw-bold rounded-3 shadow">
+                <Button as={Link} to="/laundry/services" variant="success" size="lg" className="px-4 py-3 fw-bold rounded-3 shadow">
                   Book Laundry Service
                 </Button>
               </Col>

@@ -26,6 +26,11 @@ import Checkout from "./user/pages/Checkout";
 import OrderSuccess from "./user/pages/OrderSuccess";
 import Profile from "./user/pages/Profile";
 import Wishlist from "./user/pages/Wishlist";
+import LaundryServices from "./user/pages/LaundryServices";
+import BookLaundry from "./user/pages/BookLaundry";
+import LaundryOrders from "./user/pages/LaundryOrders";
+import LaundrySupport from "./user/pages/LaundrySupport";
+import ManageLaundry from "./admin/pages/ManageLaundry";
 
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -139,6 +144,27 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route path="laundry/services" element={<LaundryServices />} />
+            <Route path="laundry/support" element={<LaundrySupport />} />
+
+            <Route
+              path="laundry/book"
+              element={
+                <ProtectedRoute>
+                  <BookLaundry />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="laundry/orders"
+              element={
+                <ProtectedRoute>
+                  <LaundryOrders />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Admin */}
@@ -161,6 +187,7 @@ function App() {
             <Route path="user-orders/:id" element={<AdminUserOrders />} />
             <Route path="categories" element={<ManageCategories />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="laundry" element={<ManageLaundry />} />
           </Route>
         </Routes>
       </Router>

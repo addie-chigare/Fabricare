@@ -8,7 +8,8 @@ import {
   FaSignOutAlt,
   FaTimes,
   FaList,
-  FaCog
+  FaCog,
+  FaTshirt
 } from "react-icons/fa";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -112,6 +113,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           >
             <FaList size={18} />
             <span>Categories</span>
+          </NavLink>
+
+          <NavLink
+            to="/admin/laundry"
+            onClick={() => { if (isOpen) toggleSidebar(); }}
+            className={({ isActive }) => 
+              `nav-link d-flex align-items-center gap-3 ${isActive ? 'active' : ''}`
+            }
+          >
+            <FaTshirt size={18} />
+            <span>Laundry</span>
           </NavLink>
 
           <NavLink

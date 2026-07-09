@@ -14,6 +14,7 @@ import addressRoutes from "./routes/addressRoutes.js";
 import bannerRoutes from "./routes/banner.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import settingsRoutes from "./routes/settings.routes.js";
+import laundryRoutes from "./routes/laundry.routes.js";
 dotenv.config();
 
 const app = express();
@@ -35,6 +36,7 @@ app.use("/api/v1/address", addressRoutes);
 app.use("/api/v1/banners", bannerRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/settings", settingsRoutes);
+app.use("/api/v1", laundryRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");

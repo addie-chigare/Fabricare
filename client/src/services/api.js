@@ -40,4 +40,37 @@ export const getProducts = () =>
 export const getProductById = (id) =>
   API.get(`/products/${id}`);
 
+// Laundry Services API
+// Customer APIs
+export const getLaundryServices = () =>
+  API.get("/laundry/services");
+
+export const getLaundryPricing = () =>
+  API.get("/laundry/pricing");
+
+export const bookLaundryPickup = (orderData) =>
+  API.post("/laundry/orders", orderData);
+
+export const getLaundryOrders = () =>
+  API.get("/laundry/orders");
+
+export const getLaundryOrderById = (id) =>
+  API.get(`/laundry/orders/${id}`);
+
+export const getCustomerSupport = () =>
+  API.get("/laundry/support");
+
+// Admin APIs
+export const getAllLaundryOrders = () =>
+  API.get("/admin/laundry/orders");
+
+export const updateOrderStatus = (id, statusData) =>
+  API.put(`/admin/laundry/orders/${id}/status`, statusData);
+
+export const updateLaundryPricing = (pricingData) =>
+  API.put("/admin/laundry/pricing", pricingData);
+
+export const getLaundryStats = () =>
+  API.get("/admin/laundry/stats");
+
 export default API;
