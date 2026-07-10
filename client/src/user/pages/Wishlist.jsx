@@ -69,6 +69,10 @@ const Wishlist = () => {
       alert("Admins cannot purchase products");
       return;
     }
+    if (item.stock <= 0) {
+      alert("Product is out of stock");
+      return;
+    }
     try {
       setError("");
       setMessage("");
@@ -153,7 +157,7 @@ const Wishlist = () => {
             return (
               <Col key={item._id} xs={6} sm={6} md={4} lg={3}>
                 <Card 
-                  className="h-100 border-0 shadow-sm overflow-hidden bg-white product-card-hover cursor-pointer"
+                  className={`h-100 border-0 shadow-sm overflow-hidden bg-white product-card-hover cursor-pointer ${item.stock <= 0 ? "sold-out-card" : ""}`}
                   style={{ borderRadius: "var(--radius-lg)" }}
                   onClick={() => navigate(`/product/${item._id}`)}
                 >
@@ -168,6 +172,21 @@ const Wishlist = () => {
                       className="w-100 h-100 p-3 object-fit-contain image-zoom"
                       onError={(e) => { e.target.src = "https://placehold.co/300x300?text=No+Image"; }}
                     />
+                    
+                    {/* Out of stock overlay */}
+                    {item.stock <= 0 && (
+                      <div 
+                        className="position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-75"
+                        style={{ zIndex: 8, top: 0, left: 0 }}
+                      >
+                        <span 
+                          className="badge bg-danger text-uppercase fw-bold px-2 py-1.5 rounded-2 shadow-sm" 
+                          style={{ letterSpacing: "0.05em", fontSize: "0.68rem" }}
+                        >
+                          Out of Stock
+                        </span>
+                      </div>
+                    )}
                     
                     {/* Delete item button */}
                     <button
@@ -209,18 +228,31 @@ const Wishlist = () => {
                       )}
                     </div>
 
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMoveToCart(item);
-                      }}
-                      className="w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2"
-                      style={{ fontSize: "0.78rem" }}
-                    >
-                      <FaShoppingBag size={12} /> Move to Cart
-                    </Button>
+                    {item.stock <= 0 ? (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="w-100 py-2.5 rounded-3 fw-bold text-uppercase disabled"
+                        style={{ fontSize: "0.78rem", cursor: "not-allowed", opacity: 0.65 }}
+                        disabled
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Out of Stock
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMoveToCart(item);
+                        }}
+                        className="w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2"
+                        style={{ fontSize: "0.78rem" }}
+                      >
+                        <FaShoppingBag size={12} /> Move to Cart
+                      </Button>
+                    )}
                   </Card.Body>
                 </Card>
               </Col>
