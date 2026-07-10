@@ -23,7 +23,7 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = (e) => {
     e.stopPropagation(); // Prevent card navigation
-    if (product.stock === 0) {
+    if (product.stock <= 0) {
       alert("Product is out of stock");
       return;
     }
@@ -67,7 +67,7 @@ const ProductCard = ({ product }) => {
 
   const handleBuyNow = (e) => {
     e.stopPropagation(); // Prevent card navigation
-    if (product.stock === 0) {
+    if (product.stock <= 0) {
       alert("Product is out of stock");
       return;
     }
@@ -131,7 +131,7 @@ const ProductCard = ({ product }) => {
     <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 px-2">
       <Card
         onClick={() => navigate(`/product/${product._id}`)}
-        className="h-100 border-0 shadow-sm overflow-hidden position-relative product-card-hover bg-white"
+        className={`h-100 border-0 shadow-sm overflow-hidden position-relative product-card-hover bg-white ${product.stock <= 0 ? "sold-out-card" : ""}`}
         style={{
           borderRadius: "var(--radius-lg)",
           cursor: "pointer",
@@ -178,19 +178,23 @@ const ProductCard = ({ product }) => {
           )}
 
           {/* Stock Badges */}
-          {product.stock === 0 ? (
-            <Badge
-              bg="dark"
-              className="position-absolute bottom-0 start-0 m-2 px-2 py-1 text-uppercase font-monospace"
-              style={{ fontSize: "0.6rem", borderRadius: "4px" }}
+          {product.stock <= 0 ? (
+            <div 
+              className="position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-75"
+              style={{ zIndex: 8, top: 0, left: 0 }}
             >
-              Sold Out
-            </Badge>
+              <span 
+                className="badge bg-danger text-uppercase fw-bold px-3 py-2 rounded-2 shadow-sm" 
+                style={{ letterSpacing: "0.05em", fontSize: "0.72rem" }}
+              >
+                Out of Stock
+              </span>
+            </div>
           ) : product.stock <= 5 ? (
             <Badge
               bg="warning"
               className="position-absolute bottom-0 start-0 m-2 px-2 py-1 text-dark text-uppercase font-monospace"
-              style={{ fontSize: "0.6rem", borderRadius: "4px" }}
+              style={{ zIndex: 10, fontSize: "0.6rem", borderRadius: "4px" }}
             >
               Only {product.stock} left
             </Badge>
@@ -239,7 +243,16 @@ const ProductCard = ({ product }) => {
 
           {/* Action Buttons */}
           <div className="d-flex gap-2 mt-3">
-            {isInCart ? (
+            {product.stock <= 0 ? (
+              <Button
+                variant="secondary"
+                className="w-100 py-1.5 fw-bold text-uppercase disabled"
+                style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px", cursor: "not-allowed", opacity: 0.65 }}
+                disabled
+              >
+                Out of Stock
+              </Button>
+            ) : isInCart ? (
               <div 
                 className="flex-grow-1 d-flex align-items-center justify-content-between border border-primary rounded-3 bg-light"
                 style={{ minHeight: "38px", padding: "0 8px" }}
@@ -266,26 +279,26 @@ const ProductCard = ({ product }) => {
                 </button>
               </div>
             ) : (
-              <Button
-                variant="outline-primary"
-                className="flex-grow-1 py-1.5 px-2 d-flex align-items-center justify-content-center gap-1 fw-bold text-nowrap"
-                style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px" }}
-                onClick={handleAddToCart}
-                disabled={product.stock === 0}
-              >
-                <FaShoppingCart size={11} /> <span>Add</span>
-              </Button>
+              <>
+                <Button
+                  variant="outline-primary"
+                  className="flex-grow-1 py-1.5 px-2 d-flex align-items-center justify-content-center gap-1 fw-bold text-nowrap"
+                  style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px" }}
+                  onClick={handleAddToCart}
+                >
+                  <FaShoppingCart size={11} /> <span>Add</span>
+                </Button>
+                
+                <Button
+                  variant="primary"
+                  className="flex-grow-1 py-1.5 px-2 d-flex align-items-center justify-content-center gap-1 fw-bold text-nowrap"
+                  style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px" }}
+                  onClick={handleBuyNow}
+                >
+                  <FaBolt size={11} /> <span>Buy Now</span>
+                </Button>
+              </>
             )}
-            
-            <Button
-              variant="primary"
-              className="flex-grow-1 py-1.5 px-2 d-flex align-items-center justify-content-center gap-1 fw-bold text-nowrap"
-              style={{ fontSize: "0.75rem", borderRadius: "10px", minHeight: "38px" }}
-              onClick={handleBuyNow}
-              disabled={product.stock === 0}
-            >
-              <FaBolt size={11} /> <span>Buy Now</span>
-            </Button>
           </div>
         </Card.Body>
       </Card>

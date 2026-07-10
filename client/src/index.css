@@ -269,3 +269,18 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Sold Out Product Card Visual Overrides */
+.sold-out-card {
+  opacity: 0.78;
+}
+
+.sold-out-card .image-zoom {
+  filter: grayscale(100%) contrast(85%) brightness(95%);
+  transition: filter 0.3s ease;
+}
+
+.sold-out-card:hover {
+  transform: none !important;
+  box-shadow: var(--card-shadow) !important;
+}
+

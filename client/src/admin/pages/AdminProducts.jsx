@@ -109,7 +109,7 @@ const AdminProducts = () => {
             </div>
             <div>
               <p className="smaller text-muted mb-0 fw-semibold text-uppercase">Out of Stock</p>
-              <h4 className="fw-bold mb-0 text-danger">{products.filter(p => p.stock === 0).length}</h4>
+              <h4 className="fw-bold mb-0 text-danger">{products.filter(p => p.stock <= 0).length}</h4>
             </div>
           </div>
         </div>
