@@ -222,6 +222,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Mobile responsive styles */
+.hero-carousel-item {
+  height: 450px;
+}
+
 @media (max-width: 767px) {
   .category-grid-mobile {
     display: grid !important;
@@ -246,6 +250,22 @@ h1, h2, h3, h4, h5, h6 {
   
   .mobile-product-img-box {
     height: auto !important;
+  }
+
+  .hero-carousel-item {
+    height: 300px !important;
+  }
+  .hero-carousel-item h1 {
+    font-size: 1.8rem !important;
+  }
+  .hero-carousel-item p.lead {
+    font-size: 0.9rem !important;
+    margin-bottom: 1rem !important;
+  }
+  .hero-carousel-item .hero-banner-btn {
+    padding: 0.4rem 1rem !important;
+    font-size: 0.82rem !important;
+    display: inline-block !important;
   }
 }
 

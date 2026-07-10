@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getLaundryOrders } from '../../services/api';
+import { getLaundryOrders, cancelLaundryOrder } from '../../services/api';
 import { generateLaundryInvoice } from '../../services/invoiceHelper';
-import axios from 'axios';
+import API from '../../services/api';
 import './Laundry.css';
 
 const LaundryOrders = () => {
@@ -13,7 +13,7 @@ const LaundryOrders = () => {
     fetchOrders();
     const fetchSettings = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/settings");
+        const res = await API.get("/settings");
         setSettings(res.data);
       } catch (err) {
         console.error("Failed to load settings in LaundryOrders:", err);
@@ -30,6 +30,20 @@ const LaundryOrders = () => {
       console.error('Error fetching orders:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this laundry booking?")) {
+      return;
+    }
+    try {
+      await cancelLaundryOrder(orderId);
+      alert("Booking cancelled successfully!");
+      fetchOrders();
+    } catch (error) {
+      console.error("Error cancelling laundry booking:", error);
+      alert(error.response?.data?.message || "Failed to cancel booking.");
     }
   };
 
@@ -131,9 +145,6 @@ const LaundryOrders = () => {
               </div>
 
               <div className="order-actions">
-                <button className="action-btn view-details">
-                  View Details
-                </button>
                 {order.status.toLowerCase() === "delivered" && (
                   <button 
                     type="button"
@@ -144,13 +155,19 @@ const LaundryOrders = () => {
                     Print Invoice
                   </button>
                 )}
-                {order.status === 'pending' && (
-                  <button className="action-btn cancel-order">
+                {order.status.toLowerCase() === 'pending' && (
+                  <button 
+                    className="action-btn cancel-order"
+                    onClick={() => handleCancelOrder(order._id || order.id)}
+                  >
                     Cancel Order
                   </button>
                 )}
-                {order.status === 'ready_for_delivery' && (
-                  <button className="action-btn track-delivery">
+                {order.status.toLowerCase() === 'ready_for_delivery' && (
+                  <button 
+                    className="action-btn track-delivery"
+                    onClick={() => alert("Your laundry is out for delivery! Our delivery executive will call you shortly.")}
+                  >
                     Track Delivery
                   </button>
                 )}

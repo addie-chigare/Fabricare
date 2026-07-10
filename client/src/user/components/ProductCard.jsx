@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaStar, FaHeart, FaRegHeart, FaShoppingCart, FaBolt } from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../../services/api";
 
 const ProductCard = ({ product }) => {
   const { addToCart, cart, removeFromCart, updateQuantity } = useCart();
@@ -103,10 +103,9 @@ const ProductCard = ({ product }) => {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/v1/auth/wishlist/toggle",
-        { productId: product._id },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await API.post(
+        "/auth/wishlist/toggle",
+        { productId: product._id }
       );
       setIsWishlisted(!isWishlisted);
 

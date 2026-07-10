@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Container, Row, Col, Card, Button, Spinner, Alert, Breadcrumb, Badge } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { FaTrash, FaShoppingBag, FaHeart } from "react-icons/fa";
-import axios from "axios";
+import API from "../../services/api";
 import { useCart } from "../../context/CartContext";
 
 const Wishlist = () => {
@@ -24,9 +24,7 @@ const Wishlist = () => {
     try {
       setLoading(true);
       setError("");
-      const { data } = await axios.get("http://localhost:8000/api/v1/auth/wishlist", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const { data } = await API.get("/auth/wishlist");
       setWishlistItems(data || []);
     } catch (err) {
       console.error("Load wishlist error:", err);
@@ -45,10 +43,7 @@ const Wishlist = () => {
     try {
       setError("");
       setMessage("");
-      const res = await axios.post("http://localhost:8000/api/v1/auth/wishlist/toggle", 
-        { productId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await API.post("/auth/wishlist/toggle", { productId });
       
       // Update local state
       setWishlistItems((prev) => prev.filter((item) => item && item._id !== productId));
@@ -91,10 +86,7 @@ const Wishlist = () => {
       });
 
       // Remove from wishlist on database
-      const res = await axios.post("http://localhost:8000/api/v1/auth/wishlist/toggle", 
-        { productId: item._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await API.post("/auth/wishlist/toggle", { productId: item._id });
 
       // Update local state
       setWishlistItems((prev) => prev.filter((w) => w && w._id !== item._id));

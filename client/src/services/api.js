@@ -54,6 +54,9 @@ export const bookLaundryPickup = (orderData) =>
 export const getLaundryOrders = () =>
   API.get("/laundry/orders");
 
+export const cancelLaundryOrder = (id) =>
+  API.put(`/laundry/orders/${id}/cancel`);
+
 export const getLaundryOrderById = (id) =>
   API.get(`/laundry/orders/${id}`);
 

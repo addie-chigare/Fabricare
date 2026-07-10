@@ -66,7 +66,7 @@ const OrderSuccess = () => {
               transition={{ delay: 0.5 }}
               className="text-muted mb-4 fs-5"
             >
-              Thank you for choosing <span className="text-primary fw-bold">Shopespher</span>. Your style journey continues here!
+              Thank you for choosing <span className="text-primary fw-bold">Fabricare</span>. Your style journey continues here!
             </motion.p>
 
             <motion.div 

@@ -177,6 +177,38 @@ export const getOrderById = async (req, res) => {
   }
 };
 
+export const cancelOrder = async (req, res) => {
+  try {
+    const order = await LaundryOrder.findOne({ _id: req.params.id, user: req.user._id });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.status !== "pending") {
+      return res.status(400).json({ message: "Only pending bookings can be cancelled." });
+    }
+
+    order.status = "cancelled";
+    order.timeline.push({
+      date: new Date(),
+      description: "Booking cancelled by customer."
+    });
+
+    await order.save();
+
+    try {
+      sendLaundryNotificationEmail(req.user.email, req.user.name, order, "cancelled");
+    } catch (err) {
+      console.error("Failed to send laundry cancel email:", err.message);
+    }
+
+    res.status(200).json(formatOrder(order));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const getSupport = async (req, res) => {
   try {
     let settings = await Settings.findOne();

@@ -542,3 +542,38 @@
     width: 100%;
   }
 }
+
+@media (max-width: 480px) {
+  .laundry-container {
+    padding: 10px !important;
+  }
+  
+  .booking-form {
+    padding: 15px !important;
+  }
+  
+  .laundry-header {
+    padding: 20px 10px !important;
+    margin-bottom: 25px !important;
+  }
+  
+  .laundry-header h1 {
+    font-size: 1.8rem !important;
+  }
+  
+  .laundry-header p {
+    font-size: 0.95rem !important;
+  }
+  
+  .support-section {
+    padding: 15px !important;
+  }
+  
+  .checkbox-item {
+    gap: 8px !important;
+  }
+  
+  .service-desc {
+    font-size: 0.8rem !important;
+  }
+}

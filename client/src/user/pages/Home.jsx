@@ -92,7 +92,7 @@ const Home = () => {
         <Carousel fade interval={4000} controls={true} indicators={true}>
           {banners.length > 0 ? (
             banners.map((banner) => (
-              <Carousel.Item key={banner._id} style={{ height: "450px" }} className="bg-dark text-white">
+              <Carousel.Item key={banner._id} className="hero-carousel-item bg-dark text-white">
                 <div className="h-100 d-flex align-items-center bg-gradient-dark position-relative">
                   <div 
                     className="position-absolute w-100 h-100" 
@@ -116,7 +116,7 @@ const Home = () => {
                             {banner.subtitle}
                           </p>
                         )}
-                        <Button as={Link} to={banner.link || "/products"} variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow d-none d-md-inline-block">
+                        <Button as={Link} to={banner.link || "/products"} variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow hero-banner-btn">
                           Shop Now
                         </Button>
                       </Col>
@@ -128,7 +128,7 @@ const Home = () => {
           ) : (
             <>
               {/* Fallback Slide 1 */}
-              <Carousel.Item style={{ height: "450px" }} className="bg-dark text-white">
+              <Carousel.Item className="hero-carousel-item bg-dark text-white">
                 <div className="h-100 d-flex align-items-center bg-gradient-dark position-relative">
                   <div 
                     className="position-absolute w-100 h-100" 
@@ -150,7 +150,7 @@ const Home = () => {
                         <p className="lead mb-4 text-white-50">
                           Discover our premium organic cotton clothing collections designed for ultimate daily comfort and luxurious style.
                         </p>
-                        <Button as={Link} to="/products" variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow d-none d-md-inline-block">
+                        <Button as={Link} to="/products" variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow hero-banner-btn">
                           Explore Catalog
                         </Button>
                       </Col>
@@ -160,7 +160,7 @@ const Home = () => {
               </Carousel.Item>
 
               {/* Fallback Slide 2 */}
-              <Carousel.Item style={{ height: "450px" }} className="bg-dark text-white">
+              <Carousel.Item className="hero-carousel-item bg-dark text-white">
                 <div className="h-100 d-flex align-items-center bg-gradient-dark position-relative">
                   <div 
                     className="position-absolute w-100 h-100" 
@@ -182,7 +182,7 @@ const Home = () => {
                         <p className="lead mb-4 text-white-50">
                           Make a bold statement with our curated streetwear, jackets, denim, and premium cotton accessories.
                         </p>
-                        <Button as={Link} to="/products" variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow d-none d-md-inline-block">
+                        <Button as={Link} to="/products" variant="primary" size="lg" className="px-4 py-2.5 fw-semibold rounded-3 shadow hero-banner-btn">
                           Shop Men's
                         </Button>
                       </Col>

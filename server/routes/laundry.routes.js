@@ -6,6 +6,7 @@ import {
   bookPickup,
   getOrders,
   getOrderById,
+  cancelOrder,
   getSupport,
   getAllOrders,
   updateOrderStatus,
@@ -24,6 +25,7 @@ router.get("/laundry/support", getSupport);
 router.post("/laundry/orders", auth, bookPickup);
 router.get("/laundry/orders", auth, getOrders);
 router.get("/laundry/orders/:id", auth, getOrderById);
+router.put("/laundry/orders/:id/cancel", auth, cancelOrder);
 
 // Admin Routes (Protected and Admin Only)
 router.get("/admin/laundry/orders", auth, isAdmin, getAllOrders);
