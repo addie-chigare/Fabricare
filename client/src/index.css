@@ -271,7 +271,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Sold Out Product Card Visual Overrides */
 .sold-out-card {
-  opacity: 0.78;
+  opacity: 0.9;
 }
 
 .sold-out-card .image-zoom {

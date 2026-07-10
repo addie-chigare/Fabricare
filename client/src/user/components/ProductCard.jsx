@@ -180,7 +180,7 @@ const ProductCard = ({ product }) => {
           {/* Stock Badges */}
           {product.stock <= 0 ? (
             <div 
-              className="position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-75"
+              className="position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-35"
               style={{ zIndex: 8, top: 0, left: 0 }}
             >
               <span 
