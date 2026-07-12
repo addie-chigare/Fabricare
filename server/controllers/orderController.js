@@ -394,28 +394,73 @@ export const getDashboardStats = async (req, res) => {
 
 export const getMonthlyRevenue = async (req, res) => {
   try {
-    const data = await Order.aggregate([
+    const { period } = req.query || {}; // 'daily', 'weekly', 'monthly'
+
+    let groupStage = {};
+    let sortStage = {};
+
+    if (period === "daily") {
+      groupStage = {
+        _id: {
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" },
+          day: { $dayOfMonth: "$createdAt" }
+        },
+        revenue: { $sum: "$totalAmount" }
+      };
+      sortStage = { "_id.year": 1, "_id.month": 1, "_id.day": 1 };
+    } else if (period === "weekly") {
+      groupStage = {
+        _id: {
+          year: { $year: "$createdAt" },
+          week: { $week: "$createdAt" }
+        },
+        revenue: { $sum: "$totalAmount" }
+      };
+      sortStage = { "_id.year": 1, "_id.week": 1 };
+    } else {
+      // default: monthly
+      groupStage = {
+        _id: {
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" }
+        },
+        revenue: { $sum: "$totalAmount" }
+      };
+      sortStage = { "_id.year": 1, "_id.month": 1 };
+    }
+
+    const rawData = await Order.aggregate([
       {
         $match: {
           status: { $ne: "Cancelled" },
           paymentStatus: { $nin: ["Failed", "Refunded"] }
         },
       },
-
-      {
-        $group: {
-          _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
-          },
-          revenue: { $sum: "$totalAmount" },
-        },
-      },
-
-      { $sort: { "_id.year": 1, "_id.month": 1 } },
+      { $group: groupStage },
+      { $sort: sortStage }
     ]);
 
-    res.json(data);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const formattedData = rawData.map(item => {
+      let label = "";
+      if (period === "daily") {
+        const { year, month, day } = item._id;
+        label = `${day} ${months[month - 1]} ${year}`;
+      } else if (period === "weekly") {
+        const { year, week } = item._id;
+        label = `Week ${week}, ${year}`;
+      } else {
+        const { year, month } = item._id;
+        label = `${months[month - 1]} ${year}`;
+      }
+      return {
+        label,
+        revenue: item.revenue
+      };
+    });
+
+    res.json(formattedData);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

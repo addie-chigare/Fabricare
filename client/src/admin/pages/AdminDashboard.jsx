@@ -46,6 +46,7 @@ const AdminDashboard = () => {
   const [revenue, setRevenue] = useState(0);
   const [recentOrders, setRecentOrders] = useState([]);
   const [lowStockCount, setLowStockCount] = useState(0);
+  const [revenuePeriod, setRevenuePeriod] = useState("monthly");
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
@@ -195,14 +196,26 @@ const AdminDashboard = () => {
             <div className="admin-card h-100 p-0 overflow-hidden">
                 <div className="px-4 py-3 border-bottom d-flex justify-content-between align-items-center bg-white">
                     <h6 className="fw-bold mb-0">Revenue Trajectory</h6>
-                    <div className="dropdown">
-                        <button className="btn btn-link btn-sm text-decoration-none dropdown-toggle text-muted fw-bold p-0" style={{ fontSize: '0.75rem' }}>
-                            Monthly View
+                    <div className="d-flex gap-1 bg-light p-1 rounded-pill" style={{ border: "1px solid #e2e8f0" }}>
+                      {["daily", "weekly", "monthly"].map((p) => (
+                        <button
+                          key={p}
+                          type="button"
+                          className={`btn btn-sm rounded-pill px-3 fw-bold border-0 text-capitalize ${
+                            revenuePeriod === p
+                              ? "bg-primary text-white shadow-sm"
+                              : "text-muted btn-link text-decoration-none"
+                          }`}
+                          onClick={() => setRevenuePeriod(p)}
+                          style={{ fontSize: "0.75rem" }}
+                        >
+                          {p}
                         </button>
+                      ))}
                     </div>
                 </div>
                 <div className="p-4" style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' }}>
-                    <RevenueChart />
+                    <RevenueChart period={revenuePeriod} />
                 </div>
             </div>
          </div>
