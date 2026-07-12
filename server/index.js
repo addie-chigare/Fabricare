@@ -49,7 +49,7 @@ const clientDistPath = path.join(__dirname, "../client/dist");
 app.use(express.static(clientDistPath));
 
 // Fallback for all other routes to serve React's index.html
-app.get("*", (req, res) => {
+app.use((req, res) => {
   // If request is for an API endpoint, return 404
   if (req.originalUrl.startsWith("/api")) {
     return res.status(404).json({ message: "Route Not Found" });
