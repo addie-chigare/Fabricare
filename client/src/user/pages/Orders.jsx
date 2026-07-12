@@ -12,6 +12,53 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 
+// Groups a list of orders into labeled date buckets: Today, Yesterday,
+// This week, This month, and then "Month Year" for anything older.
+const groupOrdersByDate = (ordersList) => {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfYesterday = new Date(startOfToday);
+  startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+  const startOfWeek = new Date(startOfToday);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfToday.getDay());
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const groups = [];
+  const groupIndex = {};
+
+  const pushToGroup = (label, order) => {
+    if (!(label in groupIndex)) {
+      groupIndex[label] = groups.length;
+      groups.push({ label, orders: [] });
+    }
+    groups[groupIndex[label]].orders.push(order);
+  };
+
+  ordersList.forEach((order) => {
+    const created = new Date(order.createdAt);
+    let label;
+
+    if (created >= startOfToday) {
+      label = "Today";
+    } else if (created >= startOfYesterday) {
+      label = "Yesterday";
+    } else if (created >= startOfWeek) {
+      label = "This week";
+    } else if (created >= startOfMonth) {
+      label = "This month";
+    } else {
+      label = created.toLocaleDateString(undefined, {
+        month: "long",
+        year: "numeric",
+      });
+    }
+
+    pushToGroup(label, order);
+  });
+
+  return groups;
+};
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState("All");
@@ -97,6 +144,8 @@ const Orders = () => {
     indexOfLastOrder,
   );
 
+  const orderGroups = groupOrdersByDate(currentOrders);
+
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
   const filterOptions = ["All", "Active", "Delivered", "Cancelled"];
 
@@ -146,6 +195,37 @@ const Orders = () => {
         .filter-tabs .btn {
           white-space: nowrap;
           flex-shrink: 0;
+        }
+
+        .order-date-group {
+          margin-bottom: 1.75rem;
+        }
+
+        .order-date-group-label {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 0.9rem;
+          position: sticky;
+          top: 0;
+          z-index: 2;
+          background: var(--bs-body-bg, #fff);
+          padding: 4px 0;
+        }
+
+        .order-date-group-label span {
+          font-size: 0.78rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: #6c757d;
+          white-space: nowrap;
+        }
+
+        .order-date-group-line {
+          flex-grow: 1;
+          height: 1px;
+          background: #e9ecef;
         }
 
         .order-card-header {
@@ -302,217 +382,226 @@ const Orders = () => {
           </Card.Body>
         </Card>
       ) : (
-        currentOrders.map((order) => (
-          <Card
-            key={order._id}
-            className="border-0 shadow-sm mb-4"
-            style={{ borderRadius: "20px", overflow: "hidden" }}
-          >
-            <Card.Header className="bg-light border-0 py-3 px-3 px-sm-4">
-              <div className="order-card-header">
-                <div className="order-meta text-muted small text-uppercase fw-bold">
-                  <div>
-                    Order ID:{" "}
-                    <span className="text-dark">#{order._id.slice(-8)}</span>
-                  </div>
-                  <div>
-                    <FaCalendarAlt className="me-1" />{" "}
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-                <div className="order-badges">
-                  <Badge
-                    bg={
-                      order.status === "Pending"
-                        ? "primary"
-                        : order.status === "Confirmed"
-                          ? "info"
-                          : order.status === "Shipped"
-                            ? "warning"
-                            : order.status === "Delivered"
-                              ? "success"
-                              : "danger"
-                    }
-                    className="px-3 py-2"
-                    style={{ borderRadius: "8px" }}
-                  >
-                    Order: {order.status}
-                  </Badge>
-                  <Badge
-                    bg={
-                      order.paymentStatus === "Completed"
-                        ? "success"
-                        : order.paymentStatus === "Refunded"
-                          ? "info"
-                          : order.paymentStatus === "Failed"
-                            ? "danger"
-                            : "warning"
-                    }
-                    className="px-3 py-2 text-dark"
-                    style={{ borderRadius: "8px" }}
-                  >
-                    Payment: {order.paymentStatus}
-                  </Badge>
-                </div>
-              </div>
-              <div className="small mt-2 text-muted">
-                {order.status === "Shipped" && order.shippedAt && (
-                  <div>
-                    📦 Shipped on:{" "}
-                    {new Date(order.shippedAt).toLocaleDateString()}
-                  </div>
-                )}
+        orderGroups.map((group) => (
+          <div className="order-date-group" key={group.label}>
+            <div className="order-date-group-label">
+              <span>{group.label}</span>
+              <div className="order-date-group-line" />
+            </div>
 
-                {order.status === "Delivered" && order.deliveredAt && (
-                  <div className="text-success">
-                    🚚 Delivered on:{" "}
-                    {new Date(order.deliveredAt).toLocaleDateString()}
-                  </div>
-                )}
-
-                {order.status === "Cancelled" && order.cancelledAt && (
-                  <div className="text-danger">
-                    ❌ Cancelled on:{" "}
-                    {new Date(order.cancelledAt).toLocaleDateString()}
-                  </div>
-                )}
-
-                {order.paymentStatus === "Refunded" && (
-                  <div className="text-info fw-bold mt-1">
-                    💸 Refunded: ₹{order.totalAmount.toLocaleString()} returned to your PayPal account.
-                  </div>
-                )}
-              </div>
-            </Card.Header>
-
-            <Card.Body className="p-3 p-sm-4">
-              <Row className="gy-4">
-                {/* Left Column: Products */}
-                <Col lg={8}>
-                  <h6 className="fw-bold mb-3 text-uppercase small text-muted">
-                    Order Items
-                  </h6>
-                  {order.items.map((item) => (
-                    <div
-                      key={item._id}
-                      className="order-item-row mb-3 pb-3 border-bottom border-light"
-                    >
-                      <img
-                        src={item.product?.image}
-                        alt={item.product?.name}
-                        className="order-item-img shadow-sm"
-                      />
-                      <div className="order-item-info">
-                        <h6 className="mb-1 fw-bold order-item-name">
-                          {item.product?.name}
-                        </h6>
-                        <div className="text-muted small">
-                          ₹{item.product?.price.toLocaleString()} ×{" "}
-                          {item.quantity}
-                        </div>
+            {group.orders.map((order) => (
+              <Card
+                key={order._id}
+                className="border-0 shadow-sm mb-4"
+                style={{ borderRadius: "20px", overflow: "hidden" }}
+              >
+                <Card.Header className="bg-light border-0 py-3 px-3 px-sm-4">
+                  <div className="order-card-header">
+                    <div className="order-meta text-muted small text-uppercase fw-bold">
+                      <div>
+                        Order ID:{" "}
+                        <span className="text-dark">#{order._id.slice(-8)}</span>
                       </div>
-                      <div className="fw-bold text-primary order-item-price">
-                        ₹
-                        {(item.product?.price * item.quantity).toLocaleString()}
+                      <div>
+                        <FaCalendarAlt className="me-1" />{" "}
+                        {new Date(order.createdAt).toLocaleDateString()}
                       </div>
                     </div>
-                  ))}
-
-                  <div className="d-flex justify-content-between align-items-center mt-3">
-                    <div className="text-muted small">Total Amount</div>
-                    <h4 className="fw-bold text-primary mb-0">
-                      ₹{order.totalAmount.toLocaleString()}
-                    </h4>
+                    <div className="order-badges">
+                      <Badge
+                        bg={
+                          order.status === "Pending"
+                            ? "primary"
+                            : order.status === "Confirmed"
+                              ? "info"
+                              : order.status === "Shipped"
+                                ? "warning"
+                                : order.status === "Delivered"
+                                  ? "success"
+                                  : "danger"
+                        }
+                        className="px-3 py-2"
+                        style={{ borderRadius: "8px" }}
+                      >
+                        Order: {order.status}
+                      </Badge>
+                      <Badge
+                        bg={
+                          order.paymentStatus === "Completed"
+                            ? "success"
+                            : order.paymentStatus === "Refunded"
+                              ? "info"
+                              : order.paymentStatus === "Failed"
+                                ? "danger"
+                                : "warning"
+                        }
+                        className="px-3 py-2 text-dark"
+                        style={{ borderRadius: "8px" }}
+                      >
+                        Payment: {order.paymentStatus}
+                      </Badge>
+                    </div>
                   </div>
-                </Col>
-
-                {/* Right Column: Shipping Address */}
-                <Col lg={4}>
-                  <div
-                    className="h-100 p-3 bg-light rounded-4"
-                    style={{ border: "1px solid #f1f5f9" }}
-                  >
-                    <h6 className="fw-bold mb-3 text-uppercase small text-muted d-flex align-items-center gap-2">
-                      <FaMapMarkerAlt className="text-primary" /> Shipping
-                      Address
-                    </h6>
-                    <div className="mb-3">
-                      <div className="d-flex align-items-start gap-2 mb-2">
-                        <FaUser className="text-muted mt-1" size={14} />
-                        <div className="fw-bold">{order.address?.fullName}</div>
+                  <div className="small mt-2 text-muted">
+                    {order.status === "Shipped" && order.shippedAt && (
+                      <div>
+                        📦 Shipped on:{" "}
+                        {new Date(order.shippedAt).toLocaleDateString()}
                       </div>
-                      <div className="d-flex align-items-start gap-2 mb-3">
-                        <FaPhone className="text-muted mt-1" size={14} />
-                        <div className="text-muted small">
-                          {order.address?.phone}
-                        </div>
+                    )}
+
+                    {order.status === "Delivered" && order.deliveredAt && (
+                      <div className="text-success">
+                        🚚 Delivered on:{" "}
+                        {new Date(order.deliveredAt).toLocaleDateString()}
                       </div>
+                    )}
 
-                      <div className="d-flex align-items-start gap-2 mb-3">
-                        <FaMapMarkerAlt className="text-muted mt-1" size={14} />
-                        <div className="text-muted small lh-base">
-                          {order.address?.addressLine},<br />
-                          {order.address?.city}, {order.address?.state} -{" "}
-                          {order.address?.pincode}
-                        </div>
+                    {order.status === "Cancelled" && order.cancelledAt && (
+                      <div className="text-danger">
+                        ❌ Cancelled on:{" "}
+                        {new Date(order.cancelledAt).toLocaleDateString()}
                       </div>
+                    )}
 
-                      <hr className="my-3 opacity-25" />
+                    {order.paymentStatus === "Refunded" && (
+                      <div className="text-info fw-bold mt-1">
+                        💸 Refunded: ₹{order.totalAmount.toLocaleString()} returned to your PayPal account.
+                      </div>
+                    )}
+                  </div>
+                </Card.Header>
 
-                      <h6 className="fw-bold mb-3 text-uppercase small text-muted d-flex align-items-center gap-2">
-                        <FaCreditCard className="text-primary" /> Payment
-                        Details
+                <Card.Body className="p-3 p-sm-4">
+                  <Row className="gy-4">
+                    {/* Left Column: Products */}
+                    <Col lg={8}>
+                      <h6 className="fw-bold mb-3 text-uppercase small text-muted">
+                        Order Items
                       </h6>
+                      {order.items.map((item) => (
+                        <div
+                          key={item._id}
+                          className="order-item-row mb-3 pb-3 border-bottom border-light"
+                        >
+                          <img
+                            src={item.product?.image}
+                            alt={item.product?.name}
+                            className="order-item-img shadow-sm"
+                          />
+                          <div className="order-item-info">
+                            <h6 className="mb-1 fw-bold order-item-name">
+                              {item.product?.name}
+                            </h6>
+                            <div className="text-muted small">
+                              ₹{item.product?.price.toLocaleString()} ×{" "}
+                              {item.quantity}
+                            </div>
+                          </div>
+                          <div className="fw-bold text-primary order-item-price">
+                            ₹
+                            {(item.product?.price * item.quantity).toLocaleString()}
+                          </div>
+                        </div>
+                      ))}
 
-                      <div className="mb-2 small">
-                        <strong>Payment Method:</strong> {order.paymentMethod}
+                      <div className="d-flex justify-content-between align-items-center mt-3">
+                        <div className="text-muted small">Total Amount</div>
+                        <h4 className="fw-bold text-primary mb-0">
+                          ₹{order.totalAmount.toLocaleString()}
+                        </h4>
                       </div>
+                    </Col>
 
-                      <div className="mb-2 small">
-                        <strong>Payment Status:</strong>{" "}
-                        <span className={
-                          order.paymentStatus === "Completed" ? "text-success fw-bold" :
-                          order.paymentStatus === "Refunded" ? "text-info fw-bold" :
-                          order.paymentStatus === "Failed" ? "text-danger fw-bold" : "text-warning fw-bold"
-                        }>
-                          {order.paymentStatus}
-                        </span>
-                      </div>
-
-                      <div className="mb-0 small text-break">
-                        <strong>Transaction ID:</strong>{" "}
-                        {order.transactionId ? order.transactionId : "N/A"}
-                      </div>
-                    </div>
-
-                    {(order.status === "Pending" || order.status === "Confirmed") && (
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        className="w-100 mt-2 fw-bold py-2"
-                        onClick={() => cancelOrder(order._id)}
-                        style={{ borderRadius: "10px" }}
+                    {/* Right Column: Shipping Address */}
+                    <Col lg={4}>
+                      <div
+                        className="h-100 p-3 bg-light rounded-4"
+                        style={{ border: "1px solid #f1f5f9" }}
                       >
-                        Cancel Order
-                      </Button>
-                    )}
+                        <h6 className="fw-bold mb-2 text-uppercase small text-muted d-flex align-items-center gap-2">
+                          <FaMapMarkerAlt className="text-primary" /> Shipping
+                          Address
+                        </h6>
+                        <div className="mb-2">
+                          <div className="d-flex align-items-start gap-2 mb-1">
+                            <FaUser className="text-muted mt-1" size={14} />
+                            <div className="fw-bold">{order.address?.fullName}</div>
+                          </div>
+                          <div className="d-flex align-items-start gap-2 mb-1">
+                            <FaPhone className="text-muted mt-1" size={14} />
+                            <div className="text-muted small">
+                              {order.address?.phone}
+                            </div>
+                          </div>
 
-                    {order.status === "Delivered" && (
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        className="w-100 mt-2 fw-bold py-2"
-                        onClick={() => generateProductInvoice(order, settings)}
-                        style={{ borderRadius: "10px" }}
-                      >
-                        Print Invoice
-                      </Button>
-                    )}
-                  </div>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
+                          <div className="d-flex align-items-start gap-2 mb-1">
+                            <FaMapMarkerAlt className="text-muted mt-1" size={14} />
+                            <div className="text-muted small lh-base">
+                              {order.address?.addressLine},<br />
+                              {order.address?.city}, {order.address?.state} -{" "}
+                              {order.address?.pincode}
+                            </div>
+                          </div>
+
+                          <hr className="my-2 opacity-25" />
+
+                          <h6 className="fw-bold mb-2 text-uppercase small text-muted d-flex align-items-center gap-2">
+                            <FaCreditCard className="text-primary" /> Payment
+                            Details
+                          </h6>
+
+                          <div className="mb-1 small">
+                            <strong>Payment Method:</strong> {order.paymentMethod}
+                          </div>
+
+                          <div className="mb-1 small">
+                            <strong>Payment Status:</strong>{" "}
+                            <span className={
+                              order.paymentStatus === "Completed" ? "text-success fw-bold" :
+                              order.paymentStatus === "Refunded" ? "text-info fw-bold" :
+                              order.paymentStatus === "Failed" ? "text-danger fw-bold" : "text-warning fw-bold"
+                            }>
+                              {order.paymentStatus}
+                            </span>
+                          </div>
+
+                          <div className="mb-0 small text-break">
+                            <strong>Transaction ID:</strong>{" "}
+                            {order.transactionId ? order.transactionId : "N/A"}
+                          </div>
+                        </div>
+
+                        {(order.status === "Pending" || order.status === "Confirmed") && (
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            className="w-100 mt-2 fw-bold py-2"
+                            onClick={() => cancelOrder(order._id)}
+                            style={{ borderRadius: "10px" }}
+                          >
+                            Cancel Order
+                          </Button>
+                        )}
+
+                        {order.status === "Delivered" && (
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            className="w-100 mt-2 fw-bold py-2"
+                            onClick={() => generateProductInvoice(order, settings)}
+                            style={{ borderRadius: "10px" }}
+                          >
+                            Print Invoice
+                          </Button>
+                        )}
+                      </div>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
         ))
       )}
 
