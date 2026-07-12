@@ -39,7 +39,7 @@ app.use("/api/v1/settings", settingsRoutes);
 app.use("/api/v1", laundryRoutes);
 
 app.get("/", (req, res) => {
-  res.send("API is running...");
+  res.send(`API is running... (Sender Configured: ${!!process.env.SMTP_SENDER})`);
 });
 
 app.use((req, res) => {
