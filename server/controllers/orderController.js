@@ -446,7 +446,9 @@ export const getMonthlyRevenue = async (req, res) => {
       let label = "";
       if (period === "daily") {
         const { year, month, day } = item._id;
-        label = `${day} ${months[month - 1]} ${year}`;
+        const date = new Date(year, month - 1, day);
+        const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+        label = `${dayName}, ${day} ${months[month - 1]} ${year}`;
       } else if (period === "weekly") {
         const { year, week } = item._id;
         label = `Week ${week}, ${year}`;
