@@ -2,6 +2,7 @@ import Order from "../models/order.model.js";
 import Cart from "../models/cart.model.js";
 import { Product } from "../models/product.js";
 import Address from "../models/Address.js";
+import { User } from "../models/user.js";
 import { sendSMS } from "../utils/smsHelper.js";
 import { sendOrderNotificationEmail } from "../utils/emailService.js";
 

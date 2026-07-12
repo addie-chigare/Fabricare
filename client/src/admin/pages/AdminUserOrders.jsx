@@ -110,10 +110,14 @@ const AdminUserOrders = () => {
                       </div>
                     </td>
                     <td>
-                      <div className="fw-bold text-dark">₹{order.totalAmount}</div>
+                      <div className="fw-bold text-dark">₹{order.totalAmount.toLocaleString()}</div>
                       <div className="smaller d-flex align-items-center gap-1">
                           <FaCreditCard className="text-muted" size={10} />
-                          <span className={order.paymentStatus === "Received" ? "text-success" : "text-warning"}>{order.paymentStatus}</span>
+                          <span className={`fw-bold ${
+                            order.paymentStatus === "Completed" ? "text-success" :
+                            order.paymentStatus === "Refunded" ? "text-info" :
+                            order.paymentStatus === "Failed" ? "text-danger" : "text-warning"
+                          }`}>{order.paymentStatus}</span>
                       </div>
                     </td>
                     <td>

@@ -135,8 +135,12 @@ const AdminOrders = () => {
                       </div>
                     </td>
                     <td>
-                      <div className="fw-bold text-dark">₹{order.totalAmount}</div>
-                      <div className="smaller text-success">{order.paymentStatus}</div>
+                      <div className="fw-bold text-dark">₹{order.totalAmount.toLocaleString()}</div>
+                      <div className={`smaller fw-bold ${
+                        order.paymentStatus === "Completed" ? "text-success" :
+                        order.paymentStatus === "Refunded" ? "text-info" :
+                        order.paymentStatus === "Failed" ? "text-danger" : "text-warning"
+                      }`}>{order.paymentStatus}</div>
                     </td>
                     <td>
                       <span className={`admin-badge ${getStatusClass(order.status)}`}>

@@ -28,7 +28,7 @@ return(
 {products.map(p=>(
 <li key={p._id} className="list-group-item d-flex justify-content-between">
 
-<span>{p._id}</span>
+<span>{p.name}</span>
 
 <span className="badge bg-primary">
 {p.totalSold}
