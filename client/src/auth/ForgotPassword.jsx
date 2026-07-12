@@ -3,7 +3,7 @@ import axios from "axios";
 import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaEnvelope, FaLock, FaKey, FaArrowLeft, FaUser, FaExternalLinkAlt } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaKey, FaArrowLeft, FaShieldAlt } from "react-icons/fa";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,8 +42,8 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/v1/auth/forgot-password", { 
-        email, 
+      const res = await axios.post("http://localhost:8000/api/v1/auth/forgot-password", {
+        email,
       });
       setMessage(res.data.message);
       setTimer(40);
@@ -94,8 +94,8 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/v1/auth/forgot-password", { 
-        email, 
+      const res = await axios.post("http://localhost:8000/api/v1/auth/forgot-password", {
+        email,
       });
       setMessage(res.data.message || "Reset code sent to your email.");
       setTimer(40);
@@ -114,168 +114,270 @@ const ForgotPassword = () => {
   };
 
   return (
-    <Container fluid className="vh-100 d-flex align-items-center justify-content-center bg-light">
-      <Row className="w-100 justify-content-center">
-        <Col md={5} lg={4}>
-          <Card className="shadow border-0 rounded-4 overflow-hidden">
-            <Card.Body className="p-4">
-              
-              <div className="mb-4">
-                <Link to="/login" className="text-muted text-decoration-none small d-flex align-items-center gap-1">
-                  <FaArrowLeft size={12} /> Back to Login
-                </Link>
-              </div>
+    <div className="auth-bg">
+      <style>{`
+        .auth-bg {
+          min-height: 100vh;
+          width: 100%;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          background-color: #f8f9fa;
+          background-image:
+            radial-gradient(circle at 15% 20%, rgba(25, 135, 84, 0.06) 0%, transparent 45%),
+            radial-gradient(circle at 85% 80%, rgba(13, 110, 253, 0.05) 0%, transparent 45%);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          padding: 24px;
+        }
 
-              <h3 className="text-center mb-3 fw-bold">
-                Reset Password
-              </h3>
-              
-              <p className="text-muted text-center small mb-4">
-                {step === 1 
-                  ? "Enter your Email address or Username. A secure 6-digit OTP will be sent." 
-                  : "Enter the OTP code sent to your email and choose your new password."
-                }
-              </p>
+        .auth-bg .grain {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          opacity: 0.5;
+          background-image: radial-gradient(rgba(0,0,0,0.035) 1px, transparent 1px);
+          background-size: 22px 22px;
+          mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, black 30%, transparent 90%);
+        }
 
-              {error && <Alert variant="danger" className="py-2 small">{error}</Alert>}
-              {message && <Alert variant="success" className="py-2 small">{message}</Alert>}
+        .auth-card {
+          position: relative;
+          z-index: 1;
+          width: 100%;
+          max-width: 420px;
+          background: #ffffff;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          border-radius: 20px;
+          box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 20px 45px rgba(16, 24, 40, 0.10);
+          padding: 36px 32px;
+        }
 
+        .auth-badge {
+          width: 46px;
+          height: 46px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #198754, #157347);
+          box-shadow: 0 6px 16px rgba(25, 135, 84, 0.28);
+          margin: 0 auto 14px auto;
+        }
 
+        .auth-title {
+          font-weight: 700;
+          letter-spacing: -0.01em;
+          color: #1c2333;
+        }
 
-              <AnimatePresence mode="wait">
-                {step === 1 ? (
-                  <motion.div
-                    key="step1"
-                    variants={slideVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                  >
-                    <Form onSubmit={handleSendOtp}>
-                      <Form.Group className="mb-4">
-                        <Form.Label className="small fw-semibold text-muted">Email Address or Username</Form.Label>
-                        <div className="input-group">
-                          <span className="input-group-text bg-light border-end-0 text-muted">
-                            <FaEnvelope />
-                          </span>
-                          <Form.Control
-                            type="text"
-                            placeholder="Enter email or username"
-                            className="border-start-0 bg-light"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                          />
-                        </div>
-                      </Form.Group>
+        .auth-back-link {
+          color: #6c757d !important;
+          transition: color 0.2s ease;
+        }
+        .auth-back-link:hover {
+          color: #198754 !important;
+        }
 
-                      <Button 
-                        variant="primary" 
-                        type="submit" 
-                        className="w-100 py-2 fw-semibold"
+        .auth-input-group .input-group-text {
+          background: #f8f9fa;
+          border: 1px solid #dee2e6;
+          border-right: none;
+          color: #6c757d;
+        }
+
+        .auth-input-group .form-control {
+          border-left: none;
+        }
+
+        .auth-input-group .form-control:focus {
+          border-color: #86d5b0 !important;
+          box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.15) !important;
+        }
+
+        .auth-input-group:focus-within .input-group-text {
+          border-color: #86d5b0;
+        }
+
+        .btn-primary-glow {
+          background: linear-gradient(135deg, #198754, #157347) !important;
+          border: none !important;
+          font-weight: 600 !important;
+          box-shadow: 0 6px 16px rgba(25, 135, 84, 0.25);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-primary-glow:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 8px 20px rgba(25, 135, 84, 0.32);
+        }
+        .btn-primary-glow:disabled {
+          opacity: 0.65;
+        }
+
+        .otp-input {
+          letter-spacing: 0.5em !important;
+          font-size: 1.1rem !important;
+        }
+
+        .resend-link {
+          color: #198754 !important;
+        }
+      `}</style>
+
+      <div className="grain" />
+
+      <div className="auth-card">
+
+        <div className="mb-3">
+          <Link to="/login" className="auth-back-link text-decoration-none small d-flex align-items-center gap-1">
+            <FaArrowLeft size={12} /> Back to Login
+          </Link>
+        </div>
+
+        <div className="auth-badge">
+          <FaShieldAlt color="#fff" size={20} />
+        </div>
+
+        <h3 className="text-center mb-3 auth-title">
+          Reset Password
+        </h3>
+
+        <p className="text-muted text-center small mb-4">
+          {step === 1
+            ? "Enter your Email address or Username. A secure 6-digit OTP will be sent."
+            : "Enter the OTP code sent to your email and choose your new password."
+          }
+        </p>
+
+        {error && <Alert variant="danger" className="py-2 small">{error}</Alert>}
+        {message && <Alert variant="success" className="py-2 small">{message}</Alert>}
+
+        <AnimatePresence mode="wait">
+          {step === 1 ? (
+            <motion.div
+              key="step1"
+              variants={slideVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <Form onSubmit={handleSendOtp}>
+                <Form.Group className="mb-4">
+                  <Form.Label className="small fw-semibold text-muted">Email Address or Username</Form.Label>
+                  <div className="input-group auth-input-group">
+                    <span className="input-group-text">
+                      <FaEnvelope />
+                    </span>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter email or username"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                </Form.Group>
+
+                <Button
+                  type="submit"
+                  className="btn-primary-glow w-100 py-2"
+                  disabled={loading}
+                >
+                  {loading ? "Sending..." : "Send Reset Code"}
+                </Button>
+              </Form>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="step2"
+              variants={slideVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <Form onSubmit={handleResetPassword}>
+
+                <Form.Group className="mb-3">
+                  <div className="d-flex justify-content-between align-items-center mb-1">
+                    <Form.Label className="small fw-semibold text-muted mb-0">6-Digit OTP</Form.Label>
+                    {timer > 0 ? (
+                      <span className="text-muted small">Resend in <strong>{timer}s</strong></span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        className="btn btn-link p-0 text-decoration-none small fw-semibold resend-link"
                         disabled={loading}
+                        style={{ fontSize: "0.85rem" }}
                       >
-                        {loading ? "Sending..." : "Send Reset Code"}
-                      </Button>
-                    </Form>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="step2"
-                    variants={slideVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                  >
-                    <Form onSubmit={handleResetPassword}>
-                      
-                      <Form.Group className="mb-3">
-                        <div className="d-flex justify-content-between align-items-center mb-1">
-                          <Form.Label className="small fw-semibold text-muted mb-0">6-Digit OTP</Form.Label>
-                          {timer > 0 ? (
-                            <span className="text-muted small">Resend in <strong>{timer}s</strong></span>
-                          ) : (
-                            <button 
-                              type="button"
-                              onClick={handleResendOtp} 
-                              className="btn btn-link p-0 text-decoration-none small fw-semibold text-primary"
-                              disabled={loading}
-                              style={{ fontSize: "0.85rem" }}
-                            >
-                              Resend OTP
-                            </button>
-                          )}
-                        </div>
-                        <div className="input-group">
-                          <span className="input-group-text bg-light border-end-0 text-muted">
-                            <FaKey />
-                          </span>
-                          <Form.Control
-                            type="text"
-                            placeholder="Enter 6-digit OTP"
-                            className="border-start-0 bg-light text-center fw-bold letter-spacing-2"
-                            maxLength={6}
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            required
-                          />
-                        </div>
-                      </Form.Group>
+                        Resend OTP
+                      </button>
+                    )}
+                  </div>
+                  <div className="input-group auth-input-group">
+                    <span className="input-group-text">
+                      <FaKey />
+                    </span>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter 6-digit OTP"
+                      className="text-center fw-bold otp-input"
+                      maxLength={6}
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      required
+                    />
+                  </div>
+                </Form.Group>
 
-                      <Form.Group className="mb-3">
-                        <Form.Label className="small fw-semibold text-muted">New Password</Form.Label>
-                        <div className="input-group">
-                          <span className="input-group-text bg-light border-end-0 text-muted">
-                            <FaLock />
-                          </span>
-                          <Form.Control
-                            type="password"
-                            placeholder="Minimum 6 characters"
-                            className="border-start-0 bg-light"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                          />
-                        </div>
-                      </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label className="small fw-semibold text-muted">New Password</Form.Label>
+                  <div className="input-group auth-input-group">
+                    <span className="input-group-text">
+                      <FaLock />
+                    </span>
+                    <Form.Control
+                      type="password"
+                      placeholder="Minimum 6 characters"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </Form.Group>
 
-                      <Form.Group className="mb-4">
-                        <Form.Label className="small fw-semibold text-muted">Confirm New Password</Form.Label>
-                        <div className="input-group">
-                          <span className="input-group-text bg-light border-end-0 text-muted">
-                            <FaLock />
-                          </span>
-                          <Form.Control
-                            type="password"
-                            placeholder="Re-enter new password"
-                            className="border-start-0 bg-light"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                          />
-                        </div>
-                      </Form.Group>
+                <Form.Group className="mb-4">
+                  <Form.Label className="small fw-semibold text-muted">Confirm New Password</Form.Label>
+                  <div className="input-group auth-input-group">
+                    <span className="input-group-text">
+                      <FaLock />
+                    </span>
+                    <Form.Control
+                      type="password"
+                      placeholder="Re-enter new password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </Form.Group>
 
-                      <Button 
-                        variant="success" 
-                        type="submit" 
-                        className="w-100 py-2 fw-semibold"
-                        disabled={loading}
-                      >
-                        {loading ? "Resetting..." : "Reset Password"}
-                      </Button>
+                <Button
+                  type="submit"
+                  className="btn-primary-glow w-100 py-2"
+                  disabled={loading}
+                >
+                  {loading ? "Resetting..." : "Reset Password"}
+                </Button>
 
+              </Form>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                    </Form>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+      </div>
+    </div>
   );
 };
 

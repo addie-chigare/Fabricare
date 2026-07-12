@@ -105,18 +105,154 @@ const Orders = () => {
   }, [filter]);
 
   return (
-    <Container className="py-5">
-      <div className="d-flex align-items-center justify-content-between mb-5">
-        <div className="d-flex align-items-center gap-3">
+    <Container className="orders-page py-4 py-md-5 px-3 px-sm-4">
+      <style>{`
+        .orders-page {
+          max-width: 1140px;
+        }
+
+        .orders-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          flex-wrap: wrap;
+          margin-bottom: 2rem;
+        }
+
+        .orders-title-row {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .orders-icon-badge {
+          width: 52px;
+          height: 52px;
+          flex-shrink: 0;
+        }
+
+        .filter-tabs {
+          display: flex;
+          gap: 2px;
+          overflow-x: auto;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+          max-width: 100%;
+        }
+        .filter-tabs::-webkit-scrollbar {
+          display: none;
+        }
+        .filter-tabs .btn {
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+
+        .order-card-header {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+
+        .order-meta {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px 20px;
+        }
+
+        .order-badges {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .order-item-row {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .order-item-img {
+          width: 72px;
+          height: 72px;
+          object-fit: cover;
+          border-radius: 12px;
+          flex-shrink: 0;
+        }
+
+        .order-item-info {
+          flex-grow: 1;
+          min-width: 0;
+        }
+
+        .order-item-name {
+          overflow-wrap: anywhere;
+        }
+
+        .order-item-price {
+          flex-shrink: 0;
+          text-align: right;
+        }
+
+        .pagination-wrap {
+          overflow-x: auto;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .pagination-wrap::-webkit-scrollbar {
+          display: none;
+        }
+
+        @media (max-width: 767.98px) {
+          .orders-header {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .filter-tabs {
+            width: 100%;
+          }
+          .filter-tabs .btn {
+            padding-left: 14px !important;
+            padding-right: 14px !important;
+            font-size: 0.85rem;
+          }
+          .order-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .order-item-img {
+            width: 60px;
+            height: 60px;
+          }
+          .order-item-name {
+            font-size: 0.92rem;
+          }
+        }
+
+        @media (max-width: 575.98px) {
+          .orders-icon-badge {
+            width: 46px;
+            height: 46px;
+          }
+          .orders-title-row h2 {
+            font-size: 1.3rem;
+          }
+        }
+      `}</style>
+
+      <div className="orders-header">
+        <div className="orders-title-row">
           <div
-            className="bg-primary text-white p-3 rounded-circle d-flex align-items-center justify-content-center"
-            style={{ width: "60px", height: "60px" }}
+            className="bg-primary text-white orders-icon-badge rounded-circle d-flex align-items-center justify-content-center"
           >
-            <FaBox size={28} />
+            <FaBox size={24} />
           </div>
           <div>
             <h2 className="fw-bold mb-0">My Orders</h2>
-            <p className="text-muted mb-0">
+            <p className="text-muted mb-0 small">
               Track and manage your order history
             </p>
           </div>
@@ -124,14 +260,14 @@ const Orders = () => {
 
         {/* Filter Tabs */}
         <div
-          className="bg-light p-1 rounded-pill d-flex shadow-sm"
+          className="bg-light p-1 rounded-pill shadow-sm filter-tabs"
           style={{ border: "1px solid #f1f5f9" }}
         >
           {filterOptions.map((opt) => (
             <Button
               key={opt}
               variant={filter === opt ? "primary" : "link"}
-              className={`rounded-pill px-4 fw-bold text-decoration-none transition-all ${filter === opt ? "shadow-sm" : "text-muted"}`}
+              className={`rounded-pill px-4 fw-bold text-decoration-none ${filter === opt ? "shadow-sm" : "text-muted"}`}
               onClick={() => setFilter(opt)}
               size="sm"
             >
@@ -172,50 +308,52 @@ const Orders = () => {
             className="border-0 shadow-sm mb-4"
             style={{ borderRadius: "20px", overflow: "hidden" }}
           >
-            <Card.Header className="bg-light border-0 py-3 px-4 d-flex justify-content-between align-items-center">
-              <div className="d-flex align-items-center gap-4 text-muted small text-uppercase fw-bold">
-                <div>
-                  Order ID:{" "}
-                  <span className="text-dark">#{order._id.slice(-8)}</span>
+            <Card.Header className="bg-light border-0 py-3 px-3 px-sm-4">
+              <div className="order-card-header">
+                <div className="order-meta text-muted small text-uppercase fw-bold">
+                  <div>
+                    Order ID:{" "}
+                    <span className="text-dark">#{order._id.slice(-8)}</span>
+                  </div>
+                  <div>
+                    <FaCalendarAlt className="me-1" />{" "}
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </div>
                 </div>
-                <div>
-                  <FaCalendarAlt className="me-1" />{" "}
-                  {new Date(order.createdAt).toLocaleDateString()}
+                <div className="order-badges">
+                  <Badge
+                    bg={
+                      order.status === "Pending"
+                        ? "primary"
+                        : order.status === "Confirmed"
+                          ? "info"
+                          : order.status === "Shipped"
+                            ? "warning"
+                            : order.status === "Delivered"
+                              ? "success"
+                              : "danger"
+                    }
+                    className="px-3 py-2"
+                    style={{ borderRadius: "8px" }}
+                  >
+                    Order: {order.status}
+                  </Badge>
+                  <Badge
+                    bg={
+                      order.paymentStatus === "Completed"
+                        ? "success"
+                        : order.paymentStatus === "Refunded"
+                          ? "info"
+                          : order.paymentStatus === "Failed"
+                            ? "danger"
+                            : "warning"
+                    }
+                    className="px-3 py-2 text-dark"
+                    style={{ borderRadius: "8px" }}
+                  >
+                    Payment: {order.paymentStatus}
+                  </Badge>
                 </div>
-              </div>
-              <div className="d-flex align-items-center gap-2">
-                <Badge
-                  bg={
-                    order.status === "Pending"
-                      ? "primary"
-                      : order.status === "Confirmed"
-                        ? "info"
-                        : order.status === "Shipped"
-                          ? "warning"
-                          : order.status === "Delivered"
-                            ? "success"
-                            : "danger"
-                  }
-                  className="px-3 py-2"
-                  style={{ borderRadius: "8px" }}
-                >
-                  Order: {order.status}
-                </Badge>
-                <Badge
-                  bg={
-                    order.paymentStatus === "Completed"
-                      ? "success"
-                      : order.paymentStatus === "Refunded"
-                        ? "info"
-                        : order.paymentStatus === "Failed"
-                          ? "danger"
-                          : "warning"
-                  }
-                  className="px-3 py-2 text-dark"
-                  style={{ borderRadius: "8px" }}
-                >
-                  Payment: {order.paymentStatus}
-                </Badge>
               </div>
               <div className="small mt-2 text-muted">
                 {order.status === "Shipped" && order.shippedAt && (
@@ -246,35 +384,8 @@ const Orders = () => {
                 )}
               </div>
             </Card.Header>
-            <div className="px-4 pb-2 small">
-              {order.status === "Shipped" && order.shippedAt && (
-                <div className="text-warning">
-                  📦 Shipped on:{" "}
-                  {new Date(order.shippedAt).toLocaleDateString()}
-                </div>
-              )}
 
-              {order.status === "Delivered" && order.deliveredAt && (
-                <div className="text-success">
-                  🚚 Delivered on:{" "}
-                  {new Date(order.deliveredAt).toLocaleDateString()}
-                </div>
-              )}
-
-              {order.status === "Cancelled" && order.cancelledAt && (
-                <div className="text-danger">
-                  ❌ Cancelled on:{" "}
-                  {new Date(order.cancelledAt).toLocaleDateString()}
-                </div>
-              )}
-
-              {order.paymentStatus === "Refunded" && (
-                <div className="text-info fw-bold">
-                  💸 Refunded: ₹{order.totalAmount.toLocaleString()} returned to your PayPal account.
-                </div>
-              )}
-            </div>
-            <Card.Body className="p-4">
+            <Card.Body className="p-3 p-sm-4">
               <Row className="gy-4">
                 {/* Left Column: Products */}
                 <Col lg={8}>
@@ -284,27 +395,23 @@ const Orders = () => {
                   {order.items.map((item) => (
                     <div
                       key={item._id}
-                      className="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom border-light"
+                      className="order-item-row mb-3 pb-3 border-bottom border-light"
                     >
                       <img
                         src={item.product?.image}
                         alt={item.product?.name}
-                        style={{
-                          width: "80px",
-                          height: "80px",
-                          objectFit: "cover",
-                          borderRadius: "12px",
-                        }}
-                        className="shadow-sm"
+                        className="order-item-img shadow-sm"
                       />
-                      <div className="flex-grow-1">
-                        <h6 className="mb-1 fw-bold">{item.product?.name}</h6>
+                      <div className="order-item-info">
+                        <h6 className="mb-1 fw-bold order-item-name">
+                          {item.product?.name}
+                        </h6>
                         <div className="text-muted small">
                           ₹{item.product?.price.toLocaleString()} ×{" "}
                           {item.quantity}
                         </div>
                       </div>
-                      <div className="fw-bold text-primary">
+                      <div className="fw-bold text-primary order-item-price">
                         ₹
                         {(item.product?.price * item.quantity).toLocaleString()}
                       </div>
@@ -411,30 +518,32 @@ const Orders = () => {
 
       {totalPages > 1 && (
         <div className="d-flex flex-column align-items-center mt-4">
-          <span className="small text-muted mb-2 fw-medium">
+          <span className="small text-muted mb-2 fw-medium text-center">
             Page {currentPage} &rarr; Orders {(currentPage - 1) * ordersPerPage + 1}&ndash;{Math.min(currentPage * ordersPerPage, filteredOrders.length)}
           </span>
-          <Pagination>
-            <Pagination.Prev
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            />
+          <div className="pagination-wrap w-100 d-flex justify-content-center">
+            <Pagination className="mb-0">
+              <Pagination.Prev
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+              />
 
-            {[...Array(totalPages)].map((_, index) => (
-              <Pagination.Item
-                key={index}
-                active={currentPage === index + 1}
-                onClick={() => setCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </Pagination.Item>
-            ))}
+              {[...Array(totalPages)].map((_, index) => (
+                <Pagination.Item
+                  key={index}
+                  active={currentPage === index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </Pagination.Item>
+              ))}
 
-            <Pagination.Next
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            />
-          </Pagination>
+              <Pagination.Next
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+              />
+            </Pagination>
+          </div>
         </div>
       )}
     </Container>
