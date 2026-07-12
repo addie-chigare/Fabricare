@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 const sendEmailViaBrevo = async (email, subject, htmlContent) => {
-  const senderEmail = process.env.SMTP_USER || "support@fabricare.com";
+  const senderEmail = process.env.SMTP_SENDER || process.env.SMTP_USER || "support@fabricare.com";
   try {
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -67,7 +67,7 @@ const sendMail = async (email, subject, htmlContent) => {
   }
 
   const mailOptions = {
-    from: `"Fabricare Support" <${process.env.SMTP_USER || "support@fabricare.com"}>`,
+    from: `"Fabricare Support" <${process.env.SMTP_SENDER || process.env.SMTP_USER || "support@fabricare.com"}>`,
     to: email,
     subject,
     html: htmlContent,
