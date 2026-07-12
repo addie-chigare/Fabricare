@@ -1,6 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import connectDB from "./config/db.js";
 import orderRoutes from "./routes/order.routes.js"
@@ -38,12 +43,23 @@ app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/settings", settingsRoutes);
 app.use("/api/v1", laundryRoutes);
 
-app.get("/", (req, res) => {
-  res.send(`API is running... (Sender Configured: ${!!process.env.SMTP_SENDER})`);
-});
+const clientDistPath = path.join(__dirname, "../client/dist");
 
-app.use((req, res) => {
-  res.status(404).json({ message: "Route Not Found" });
+// Serve frontend static files
+app.use(express.static(clientDistPath));
+
+// Fallback for all other routes to serve React's index.html
+app.get("*", (req, res) => {
+  // If request is for an API endpoint, return 404
+  if (req.originalUrl.startsWith("/api")) {
+    return res.status(404).json({ message: "Route Not Found" });
+  }
+  // Otherwise, serve the frontend index.html
+  res.sendFile(path.join(clientDistPath, "index.html"), (err) => {
+    if (err) {
+      res.status(404).send("index.html not found. Please build the client first.");
+    }
+  });
 });
 
 app.use((err, req, res, next) => {
