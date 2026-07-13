@@ -218,7 +218,7 @@ const AdminDashboard = () => {
           { to: "/admin/orders", icon: <FaListAlt />, label: "Order list" },
           { to: "/admin/users", icon: <FaUserPlus />, label: "Manage team" },
         ].map((action, i) => (
-          <div className="col-4" key={i}>
+          <div className="col-12 col-sm-4" key={i}>
             <Link to={action.to} className="quick-action">
               <div className="quick-action-icon">{action.icon}</div>
               {action.label}

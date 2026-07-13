@@ -27,20 +27,20 @@
   height: 100vh;
   position: sticky;
   top: 0;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
   border-right: 1px solid rgba(255,255,255,0.05);
+  overflow-y: auto; /* Enable scroll on small screen heights */
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0; /* Prevent Safari layout shrink */
 }
 
 @media (min-width: 992px) {
   .admin-sidebar:not(.open) {
-    width: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border-right: none !important;
+    margin-left: -260px;
+    border-right-color: transparent;
   }
 }
 
@@ -85,6 +85,11 @@
   padding: 1.5rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Safari backface flicker fixes */
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .admin-card:hover {
@@ -288,4 +293,15 @@
     min-width: 120px;
     padding: 0.75rem;
   }
+}
+
+/* Safari and iOS Touch Scrolling Fixes */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure Safari doesn't force native styling on select forms */
+.form-select {
+  -webkit-appearance: none;
+  appearance: none;
 }
