@@ -68,6 +68,41 @@ const Checkout = () => {
       return;
     }
 
+    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+    if (!nameRegex.test(address.fullName)) {
+      toast.error("Full Name must contain only letters and spaces, between 2 and 50 characters.");
+      return;
+    }
+
+    const phoneRegex = /^\d{10,15}$/;
+    if (!phoneRegex.test(address.phone)) {
+      toast.error("Phone number must be between 10 and 15 digits.");
+      return;
+    }
+
+    const pincodeRegex = /^[a-zA-Z0-9\s-]{5,10}$/;
+    if (!pincodeRegex.test(address.pincode)) {
+      toast.error("Pincode must be between 5 and 10 alphanumeric characters.");
+      return;
+    }
+
+    const cityRegex = /^[a-zA-Z\s-]{2,50}$/;
+    if (!cityRegex.test(address.city)) {
+      toast.error("City name must be between 2 and 50 characters.");
+      return;
+    }
+
+    const stateRegex = /^[a-zA-Z\s-]{2,50}$/;
+    if (!stateRegex.test(address.state)) {
+      toast.error("State name must be between 2 and 50 characters.");
+      return;
+    }
+
+    if (address.addressLine.trim().length < 5 || address.addressLine.trim().length > 150) {
+      toast.error("Address details must be between 5 and 150 characters.");
+      return;
+    }
+
     const items = cart.map((item) => ({
       product: item.product._id,
       quantity: item.quantity,

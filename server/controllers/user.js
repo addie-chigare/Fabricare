@@ -153,6 +153,28 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "Please fill all fields" });
     }
 
+    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+    if (!nameRegex.test(name)) {
+      return res.status(400).json({ message: "Name must contain only letters and spaces, between 2 and 50 characters." });
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+    if (!usernameRegex.test(username)) {
+      return res.status(400).json({ message: "Username must be 3-20 characters long and can only contain letters, numbers, underscores, and hyphens." });
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Please enter a valid email address." });
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+      });
+    }
+
     const existEmail = await User.findOne({ email });
     if (existEmail) {
       return res.status(400).json({ message: "Email already registered" });
@@ -446,6 +468,18 @@ export const forgotPassword = async (req, res) => {
     }
 
     const searchIdentifier = email.toLowerCase();
+    if (searchIdentifier.includes("@")) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(searchIdentifier)) {
+        return res.status(400).json({ message: "Please enter a valid email address." });
+      }
+    } else {
+      const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+      if (!usernameRegex.test(searchIdentifier)) {
+        return res.status(400).json({ message: "Username must be 3-20 characters long and can only contain letters, numbers, underscores, and hyphens." });
+      }
+    }
+
     const user = await User.findOne({
       $or: [
         { username: searchIdentifier },
@@ -516,6 +550,13 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+      });
+    }
+
     const user = await User.findOne({
       email: email.toLowerCase(),
       resetPasswordToken: otp,
@@ -551,6 +592,16 @@ export const updateProfile = async (req, res) => {
       return res.status(400).json({ message: "Please fill all fields" });
     }
 
+    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+    if (!nameRegex.test(name)) {
+      return res.status(400).json({ message: "Name must contain only letters and spaces, between 2 and 50 characters." });
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+    if (!usernameRegex.test(username)) {
+      return res.status(400).json({ message: "Username must be 3-20 characters long and can only contain letters, numbers, underscores, and hyphens." });
+    }
+
     // Check if username is already taken by another user
     const existUsername = await User.findOne({
       username: username.toLowerCase(),
@@ -583,6 +634,13 @@ export const changePassword = async (req, res) => {
   try {
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ message: "Please fill all fields" });
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+      });
     }
 
     const user = await User.findById(userId);

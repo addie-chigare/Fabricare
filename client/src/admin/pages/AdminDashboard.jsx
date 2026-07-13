@@ -1,4 +1,4 @@
-import { FaBoxOpen, FaShoppingCart, FaUsers, FaRupeeSign, FaArrowUp, FaArrowDown, FaPlus, FaUserPlus, FaListAlt, FaCog, FaHistory, FaExclamationTriangle } from "react-icons/fa";
+import { FaBoxOpen, FaShoppingCart, FaUsers, FaRupeeSign, FaArrowUp, FaArrowDown, FaPlus, FaUserPlus, FaListAlt, FaCog, FaExclamationTriangle } from "react-icons/fa";
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import API from "../../services/api";
@@ -7,24 +7,19 @@ import PropTypes from "prop-types";
 import RevenueChart from "../components/RevenueChart";
 import TopProducts from "../components/TopProducts";
 
-const StatCard = ({ title, value, icon, bgColor, textColor, trend, trendUp, subtitle }) => (
-  <div className="admin-card h-100">
-    <div className="d-flex align-items-center justify-content-between mb-3">
-      <div className="admin-stat-icon" style={{ backgroundColor: bgColor, color: textColor }}>
-        {icon}
-      </div>
+const StatCard = ({ title, value, icon, trend, trendUp }) => (
+  <div className="stat-card">
+    <div className="d-flex align-items-center justify-content-between mb-2">
+      <div className="stat-card-icon">{icon}</div>
       {trend && (
-        <span className={`admin-trend ${trendUp ? 'up' : 'down'}`}>
+        <span className={`stat-trend ${trendUp ? "up" : "down"}`}>
           {trendUp ? <FaArrowUp size={10} /> : <FaArrowDown size={10} />}
           {trend}
         </span>
       )}
     </div>
-    <div className="mb-1">
-      <h3 className="fw-bold mb-0" style={{ letterSpacing: '-0.02em' }}>{value}</h3>
-      <h6 className="text-muted small fw-bold text-uppercase mt-1" style={{ fontSize: '0.65rem', letterSpacing: '0.05em' }}>{title}</h6>
-    </div>
-    {subtitle && <p className="text-muted smaller mb-0 mt-2">{subtitle}</p>}
+    <h3 className="fw-bold mb-0">{value}</h3>
+    <p className="text-muted small mb-0">{title}</p>
   </div>
 );
 
@@ -32,11 +27,8 @@ StatCard.propTypes = {
   title: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   icon: PropTypes.node.isRequired,
-  bgColor: PropTypes.string,
-  textColor: PropTypes.string,
   trend: PropTypes.string,
   trendUp: PropTypes.bool,
-  subtitle: PropTypes.string,
 };
 
 const AdminDashboard = () => {
@@ -92,7 +84,7 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '60vh' }}>
+      <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "60vh" }}>
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -101,200 +93,243 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="container-fluid animate__animated animate__fadeIn pb-5 px-4">
+    <div className="container-fluid pb-5 px-4">
+      <style>{`
+        .stat-card {
+          background: var(--bs-body-bg, #fff);
+          border: 1px solid #edf0f3;
+          border-radius: 12px;
+          padding: 1.1rem 1.25rem;
+          height: 100%;
+        }
+        .stat-card-icon {
+          width: 34px;
+          height: 34px;
+          border-radius: 8px;
+          background: #f4f5f7;
+          color: #475569;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+        }
+        .stat-trend {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.72rem;
+          font-weight: 600;
+          padding: 2px 8px;
+          border-radius: 999px;
+        }
+        .stat-trend.up { color: #15803d; background: #f0fdf4; }
+        .stat-trend.down { color: #b91c1c; background: #fef2f2; }
+
+        .dash-panel {
+          background: var(--bs-body-bg, #fff);
+          border: 1px solid #edf0f3;
+          border-radius: 12px;
+          overflow: hidden;
+        }
+        .dash-panel-header {
+          padding: 0.9rem 1.25rem;
+          border-bottom: 1px solid #edf0f3;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .quick-action {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 0.7rem 1rem;
+          border: 1px solid #edf0f3;
+          border-radius: 10px;
+          text-decoration: none;
+          color: #1f2937;
+          font-weight: 600;
+          font-size: 0.85rem;
+          background: #fff;
+        }
+        .quick-action-icon {
+          width: 30px;
+          height: 30px;
+          border-radius: 8px;
+          background: #f4f5f7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .dash-table {
+          width: 100%;
+          font-size: 0.85rem;
+        }
+        .dash-table td {
+          padding: 0.75rem 1.25rem;
+          border-bottom: 1px solid #f1f3f5;
+          vertical-align: middle;
+        }
+        .dash-table tr:last-child td { border-bottom: none; }
+
+        .status-pill {
+          font-size: 0.72rem;
+          font-weight: 600;
+          padding: 3px 10px;
+          border-radius: 999px;
+        }
+
+        .period-toggle .btn {
+          font-size: 0.75rem;
+        }
+      `}</style>
+
       <div className="d-flex justify-content-between align-items-end mb-4 pt-3">
         <div>
-          <h2 className="fw-bold text-dark mb-1" style={{ fontSize: '1.75rem' }}>Management Overview</h2>
-          <p className="text-muted small mb-0">Direct insights into your store&apos;s ecosystem.</p>
+          <h2 className="fw-bold mb-1" style={{ fontSize: "1.6rem" }}>Dashboard</h2>
+          <p className="text-muted small mb-0">Overview of your store</p>
         </div>
-        <div className="d-flex gap-2">
-            <button className="btn btn-light btn-sm px-3 d-flex align-items-center gap-2 border-0 fw-bold">
-                <FaCog size={14} className="text-muted" /> <span className="text-muted">Settings</span>
-            </button>
+        <button className="btn btn-outline-secondary btn-sm px-3 d-flex align-items-center gap-2">
+          <FaCog size={13} /> Settings
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div className="row g-3 mb-4">
+        <div className="col-6 col-md-3">
+          <StatCard title="Revenue" value={`₹${revenue.toLocaleString()}`} icon={<FaRupeeSign />} trend="+15.2%" trendUp={true} />
+        </div>
+        <div className="col-6 col-md-3">
+          <StatCard title="Orders" value={orderCount} icon={<FaShoppingCart />} trend="+8.1%" trendUp={true} />
+        </div>
+        <div className="col-6 col-md-3">
+          <StatCard title="Products" value={productCount} icon={<FaBoxOpen />} trend="+12%" trendUp={true} />
+        </div>
+        <div className="col-6 col-md-3">
+          <StatCard title="Users" value={userCount} icon={<FaUsers />} trend="-3.4%" trendUp={false} />
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="row g-4 mb-5">
-        <div className="col-md-3">
-          <StatCard 
-            title="Revenue" 
-            value={`₹${revenue.toLocaleString()}`} 
-            icon={<FaRupeeSign />} 
-            bgColor="#f0f9ff" 
-            textColor="#0369a1"
-            trend="+15.2%"
-            trendUp={true}
-            subtitle="Current cycle earnings"
-          />
-        </div>
-        <div className="col-md-3">
-          <StatCard 
-            title="Orders" 
-            value={orderCount} 
-            icon={<FaShoppingCart />} 
-            bgColor="#fdf2f8" 
-            textColor="#be185d"
-            trend="+8.1%"
-            trendUp={true}
-            subtitle="Volume in last 30 days"
-          />
-        </div>
-        <div className="col-md-3">
-          <StatCard 
-            title="Products" 
-            value={productCount} 
-            icon={<FaBoxOpen />} 
-            bgColor="#f0fdf4" 
-            textColor="#15803d"
-            trend="+12%"
-            trendUp={true}
-            subtitle="Live in catalog"
-          />
-        </div>
-        <div className="col-md-3">
-          <StatCard 
-            title="Users" 
-            value={userCount} 
-            icon={<FaUsers />} 
-            bgColor="#fff7ed" 
-            textColor="#c2410c"
-            trend="-3.4%"
-            trendUp={false}
-            subtitle="Active registered accounts"
-          />
-        </div>
+      {/* Quick actions */}
+      <div className="row g-2 mb-4">
+        {[
+          { to: "/admin/products/create", icon: <FaPlus />, label: "Add product" },
+          { to: "/admin/orders", icon: <FaListAlt />, label: "Order list" },
+          { to: "/admin/users", icon: <FaUserPlus />, label: "Manage team" },
+        ].map((action, i) => (
+          <div className="col-4" key={i}>
+            <Link to={action.to} className="quick-action">
+              <div className="quick-action-icon">{action.icon}</div>
+              {action.label}
+            </Link>
+          </div>
+        ))}
       </div>
 
-      {/* Quick Access Horizon */}
-      <div className="mb-5">
-        <div className="d-flex align-items-center gap-2 mb-3">
-            <h6 className="fw-bold mb-0 text-dark">Quick Command Hub</h6>
-            <div className="bg-primary-light rounded-pill px-2 py-0 smaller text-primary fw-bold">Actions</div>
-        </div>
-        <div className="row g-3">
-          {[
-            { to: "/admin/products/create", icon: <FaPlus />, label: "Add Product", color: "primary" },
-            { to: "/admin/orders", icon: <FaListAlt />, label: "Order List", color: "dark" },
-            { to: "/admin/users", icon: <FaUserPlus />, label: "Manage Team", color: "dark" },
-            { to: "#", icon: <FaHistory />, label: "Audit Logs", color: "dark" }
-          ].map((action, i) => (
-            <div className="col-6 col-md-3" key={i}>
-                <Link to={action.to} className="quick-action-btn h-100">
-                    <div className={`p-2 rounded-circle mb-1 bg-${action.color === 'primary' ? 'primary text-white' : 'light text-dark'}`}>
-                        {action.icon}
-                    </div>
-                    <span className="smaller">{action.label}</span>
-                </Link>
+      <div className="row g-3 mb-4">
+        <div className="col-lg-8">
+          <div className="dash-panel h-100">
+            <div className="dash-panel-header">
+              <span className="fw-bold small">Revenue</span>
+              <div className="d-flex gap-1 period-toggle">
+                {["daily", "weekly", "monthly"].map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    className={`btn btn-sm rounded-pill px-3 text-capitalize ${
+                      revenuePeriod === p ? "btn-dark" : "btn-outline-secondary border-0"
+                    }`}
+                    onClick={() => setRevenuePeriod(p)}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
             </div>
-          ))}
+            <div className="p-3">
+              <RevenueChart period={revenuePeriod} />
+            </div>
+          </div>
+        </div>
+
+        <div className="col-lg-4">
+          <div className="dash-panel h-100 d-flex flex-column">
+            <div className="dash-panel-header">
+              <span className="fw-bold small">Inventory</span>
+              {lowStockCount > 0 && (
+                <span className="status-pill" style={{ color: "#b91c1c", background: "#fef2f2" }}>
+                  {lowStockCount} low
+                </span>
+              )}
+            </div>
+            <div className="p-3 flex-grow-1">
+              <div className="d-flex align-items-center justify-content-between mb-3 p-3 rounded-3" style={{ background: "#f8f9fb" }}>
+                <div className="d-flex align-items-center gap-2">
+                  <FaExclamationTriangle className="text-warning" />
+                  <div>
+                    <div className="fw-bold small">{lowStockCount} items</div>
+                    <div className="text-muted" style={{ fontSize: "0.72rem" }}>Running low on stock</div>
+                  </div>
+                </div>
+                <Link to="/admin/products" className="btn btn-sm btn-outline-secondary">Restock</Link>
+              </div>
+              <TopProducts />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="row g-4 mb-5">
-         <div className="col-lg-8">
-            <div className="admin-card h-100 p-0 overflow-hidden">
-                <div className="px-4 py-3 border-bottom d-flex justify-content-between align-items-center bg-white">
-                    <h6 className="fw-bold mb-0">Revenue Trajectory</h6>
-                    <div className="d-flex gap-1 bg-light p-1 rounded-pill" style={{ border: "1px solid #e2e8f0" }}>
-                      {["daily", "weekly", "monthly"].map((p) => (
-                        <button
-                          key={p}
-                          type="button"
-                          className={`btn btn-sm rounded-pill px-3 fw-bold border-0 text-capitalize ${
-                            revenuePeriod === p
-                              ? "bg-primary text-white shadow-sm"
-                              : "text-muted btn-link text-decoration-none"
-                          }`}
-                          onClick={() => setRevenuePeriod(p)}
-                          style={{ fontSize: "0.75rem" }}
-                        >
-                          {p}
-                        </button>
-                      ))}
-                    </div>
-                </div>
-                <div className="p-4" style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' }}>
-                    <RevenueChart period={revenuePeriod} />
-                </div>
-            </div>
-         </div>
-         <div className="col-lg-4">
-            <div className="admin-card h-100 p-0 overflow-hidden d-flex flex-column">
-                <div className="px-4 py-3 border-bottom bg-white d-flex align-items-center justify-content-between">
-                    <h6 className="fw-bold mb-0">Inventory Pulse</h6>
-                    {lowStockCount > 0 && <span className="bg-danger text-white px-2 py-0 rounded smaller fw-bold pulse-indicator">Alert</span>}
-                </div>
-                <div className="p-4 flex-grow-1">
-                    <div className="d-flex align-items-center justify-content-between mb-4 bg-light p-3 rounded-4">
-                        <div className="d-flex align-items-center gap-3">
-                            <div className="bg-white p-2 rounded-3 shadow-sm text-danger"><FaExclamationTriangle /></div>
-                            <div>
-                                <h6 className="mb-0 fw-bold">{lowStockCount}</h6>
-                                <p className="text-muted smaller mb-0">Low Stock Items</p>
-                            </div>
-                        </div>
-                        <Link to="/admin/products" className="btn btn-sm btn-outline-danger border-0 fw-bold smaller">Restock</Link>
-                    </div>
-                    <TopProducts />
-                </div>
-            </div>
-         </div>
-      </div>
-
-      {/* Activity Flux */}
-      <div className="admin-card p-0 overflow-hidden border-0 bg-white">
-        <div className="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
-          <h6 className="fw-bold mb-0">Recent Activity Flux</h6>
-          <Link to="/admin/orders" className="text-primary text-decoration-none fw-bold smaller">Full Stream</Link>
+      {/* Recent orders */}
+      <div className="dash-panel">
+        <div className="dash-panel-header">
+          <span className="fw-bold small">Recent orders</span>
+          <Link to="/admin/orders" className="text-decoration-none small fw-bold">View all</Link>
         </div>
 
         <div className="table-responsive">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th className="ps-4">Entity</th>
-                <th>Hash</th>
-                <th>Volume</th>
-                <th>State</th>
-                <th className="text-end pe-4">Timestamp</th>
-              </tr>
-            </thead>
+          <table className="dash-table">
             <tbody>
               {recentOrders.length > 0 ? (
                 recentOrders.map(order => (
                   <tr key={order._id}>
-                    <td className="ps-4">
-                      <div className="d-flex align-items-center gap-3">
-                        <div className="bg-primary text-white rounded-4 d-flex align-items-center justify-content-center fw-bold smaller" style={{ width: '32px', height: '32px', fontSize: '10px' }}>
-                          {order.user?.username?.charAt(0).toUpperCase() || 'G'}
+                    <td>
+                      <div className="d-flex align-items-center gap-2">
+                        <div
+                          className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                          style={{ width: 28, height: 28, fontSize: 11, background: "#eef2ff", color: "#4338ca" }}
+                        >
+                          {order.user?.username?.charAt(0).toUpperCase() || "G"}
                         </div>
                         <div>
-                            <div className="fw-bold text-dark small">{order.user?.username || 'Guest'}</div>
-                            <div className="text-muted smaller" style={{ fontSize: '10px' }}>{order.user?.email || 'External'}</div>
+                          <div className="fw-bold">{order.user?.username || "Guest"}</div>
+                          <div className="text-muted" style={{ fontSize: "0.72rem" }}>{order.user?.email || "External"}</div>
                         </div>
                       </div>
                     </td>
-                    <td><span className="text-muted fw-bold" style={{ fontSize: '10px' }}>#{order._id.slice(-6).toUpperCase()}</span></td>
-                    <td><span className="fw-bold text-dark">₹{order.totalAmount}</span></td>
+                    <td className="text-muted">#{order._id.slice(-6).toUpperCase()}</td>
+                    <td className="fw-bold">₹{order.totalAmount}</td>
                     <td>
-                      <span className={`admin-badge ${
-                        order.status === "Delivered" ? "bg-success-light text-success" : 
-                        order.status === "Cancelled" ? "bg-danger-light text-danger" : 
-                        order.status === "Shipped" ? "bg-primary-light text-primary" : 
-                        "bg-warning-light text-warning"
-                      }`}>
+                      <span
+                        className="status-pill"
+                        style={
+                          order.status === "Delivered" ? { color: "#15803d", background: "#f0fdf4" } :
+                          order.status === "Cancelled" ? { color: "#b91c1c", background: "#fef2f2" } :
+                          order.status === "Shipped" ? { color: "#1d4ed8", background: "#eff6ff" } :
+                          { color: "#b45309", background: "#fffbeb" }
+                        }
+                      >
                         {order.status}
                       </span>
                     </td>
-                    <td className="text-end pe-4 text-muted smaller">
-                      {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <td className="text-end text-muted">
+                      {new Date(order.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-center py-5 text-muted">Awaiting activity signals...</td>
+                  <td colSpan="5" className="text-center py-5 text-muted">No recent orders yet.</td>
                 </tr>
               )}
             </tbody>

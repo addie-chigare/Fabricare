@@ -65,6 +65,7 @@ try{
 
 const orders = await Order
 .find({user:req.params.id})
+.populate("user", "username email")
 .populate("items.product","name price")
 
 res.json(orders)

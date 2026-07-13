@@ -48,6 +48,48 @@ const MyAddress = () => {
 
   // Add / Update Address
   const saveAddress = async () => {
+    const { fullName, phone, addressLine, city, state, pincode } = form;
+
+    if (!fullName.trim() || !phone.trim() || !addressLine.trim() || !city.trim() || !state.trim() || !pincode.trim()) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+    if (!nameRegex.test(fullName)) {
+      alert("Full Name must contain only letters and spaces, between 2 and 50 characters.");
+      return;
+    }
+
+    const phoneRegex = /^\d{10,15}$/;
+    if (!phoneRegex.test(phone)) {
+      alert("Phone number must be between 10 and 15 digits.");
+      return;
+    }
+
+    const pincodeRegex = /^[a-zA-Z0-9\s-]{5,10}$/;
+    if (!pincodeRegex.test(pincode)) {
+      alert("Pincode must be between 5 and 10 alphanumeric characters.");
+      return;
+    }
+
+    const cityRegex = /^[a-zA-Z\s-]{2,50}$/;
+    if (!cityRegex.test(city)) {
+      alert("City name must be between 2 and 50 characters.");
+      return;
+    }
+
+    const stateRegex = /^[a-zA-Z\s-]{2,50}$/;
+    if (!stateRegex.test(state)) {
+      alert("State name must be between 2 and 50 characters.");
+      return;
+    }
+
+    if (addressLine.trim().length < 5 || addressLine.trim().length > 150) {
+      alert("Address details must be between 5 and 150 characters.");
+      return;
+    }
+
     try {
       if (editId) {
         await axios.put(

@@ -175,6 +175,12 @@ const Profile = () => {
     setError("");
     setMessage("");
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(passwordForm.newPassword)) {
+      setError("Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+      return;
+    }
+
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       setError("New passwords do not match.");
       return;
@@ -216,6 +222,49 @@ const Profile = () => {
     e.preventDefault();
     setError("");
     setMessage("");
+
+    const { fullName, phone, addressLine, city, state, pincode } = addressForm;
+
+    if (!fullName.trim() || !phone.trim() || !addressLine.trim() || !city.trim() || !state.trim() || !pincode.trim()) {
+      setError("Please fill all address fields.");
+      return;
+    }
+
+    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+    if (!nameRegex.test(fullName)) {
+      setError("Full Name must contain only letters and spaces, between 2 and 50 characters.");
+      return;
+    }
+
+    const phoneRegex = /^\d{10,15}$/;
+    if (!phoneRegex.test(phone)) {
+      setError("Phone number must be between 10 and 15 digits.");
+      return;
+    }
+
+    const pincodeRegex = /^[a-zA-Z0-9\s-]{5,10}$/;
+    if (!pincodeRegex.test(pincode)) {
+      setError("Pincode must be between 5 and 10 alphanumeric characters.");
+      return;
+    }
+
+    const cityRegex = /^[a-zA-Z\s-]{2,50}$/;
+    if (!cityRegex.test(city)) {
+      setError("City name must be between 2 and 50 characters.");
+      return;
+    }
+
+    const stateRegex = /^[a-zA-Z\s-]{2,50}$/;
+    if (!stateRegex.test(state)) {
+      setError("State name must be between 2 and 50 characters.");
+      return;
+    }
+
+    if (addressLine.trim().length < 5 || addressLine.trim().length > 150) {
+      setError("Address details must be between 5 and 150 characters.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -492,7 +541,7 @@ const Profile = () => {
                         value={passwordForm.newPassword}
                         onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                         required
-                        placeholder="Minimum 6 characters"
+                        placeholder="At least 8 chars with uppercase, lowercase, digit, & symbol"
                         className="bg-light border-0 py-2 rounded-3"
                       />
                     </Form.Group>

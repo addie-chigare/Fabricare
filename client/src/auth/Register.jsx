@@ -45,6 +45,38 @@ const Register = () => {
     setError("");
     setMessage("");
     setSuggestions([]);
+
+    const { name, username, email, password } = formData;
+
+    if (!name || !username || !email || !password) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+    if (!nameRegex.test(name)) {
+      setError("Full Name must contain only letters and spaces, between 2 and 50 characters.");
+      return;
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+    if (!usernameRegex.test(username)) {
+      setError("Username must be 3-20 characters long and can only contain letters, numbers, underscores, and hyphens.");
+      return;
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError("Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -356,7 +388,7 @@ const Register = () => {
                     <Form.Control
                       type="password"
                       name="password"
-                      placeholder="Minimum 6 characters"
+                      placeholder="At least 8 chars with uppercase, lowercase, digit, & symbol"
                       className="border-start-0 bg-light"
                       value={formData.password}
                       onChange={handleChange}

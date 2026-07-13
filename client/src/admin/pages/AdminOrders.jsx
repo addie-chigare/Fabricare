@@ -53,7 +53,7 @@ const AdminOrders = () => {
   };
 
   const filteredOrders = orders.filter((order) =>
-    order.user?.username.toLowerCase().includes(search.toLowerCase()),
+    (order.user?.username || "").toLowerCase().includes(search.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);

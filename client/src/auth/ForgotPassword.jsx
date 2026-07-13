@@ -65,6 +65,12 @@ const ForgotPassword = () => {
       return;
     }
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      setError("Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -339,7 +345,7 @@ const ForgotPassword = () => {
                     </span>
                     <Form.Control
                       type="password"
-                      placeholder="Minimum 6 characters"
+                      placeholder="At least 8 chars with uppercase, lowercase, digit, & symbol"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
